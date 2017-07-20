@@ -693,6 +693,9 @@
     <ClCompile Include="..\..\getpid_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\thread_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\nginx-nginx-51a4a41\docs\html\50x.html" />

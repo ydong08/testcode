@@ -305,6 +305,7 @@
     <ClCompile Include="..\..\netserver.cpp" />
     <ClCompile Include="..\..\signal_test.cpp" />
     <ClCompile Include="..\..\test.cpp" />
+    <ClCompile Include="..\..\thread_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\mynginx\nginx\docs\html\50x.html" />
