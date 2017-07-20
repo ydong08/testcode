@@ -1,60 +1,46 @@
-#include<signal.h>
+#include<pthread.h>
 #include<stdio.h>
 #include<stdlib.h>
 #include<unistd.h>
 #include<string.h>
+#include<sys/wait.h>
 
-void handler(int a){
-	
-	printf("enter handle function\n");
+
+#define THREADNUM 5
+
+void* handler2(void* p){
+	pid_t pid = getpid();
+	pthread_t tpid = pthread_self();
+	pthread_detach(tpid);
+	printf("     getpid: %d, pthread_self: %ld\n", pid, tpid);
+
 	sleep(2);
-	printf("leave handle function\n");
-	return;
+	return NULL;
 }
 
-void sig_handler(int sigt, siginfo_t* sigf, void* p){
-	if (sigt == SIGINT || sigt == SIGQUIT || sigt == SIGHUP)
-		printf("To deal a No-real-sig: %d \n", sigt);
-	else 
-		printf("To deal a real-sig: %d \n", sigt);
+
+void* handler(void* p){
+	pid_t pid = getpid();
+	pthread_t tpid = pthread_self();
+	pthread_detach(tpid);
+	printf("   getpid: %d, pthread_self: %ld\n", pid, tpid);
+	for (int i = 0; i < THREADNUM-2; ++i){
+		pthread_create(&tpid, NULL, handler2, NULL);
+	}
+	sleep(2);
+	return NULL;
 }
+
 
 int main(){
-	struct sigaction atc;
-	sigset_t  oldsig;
-	sigemptyset(&atc.sa_mask);
-	sigemptyset(&oldsig);
-
-	sigaddset(&atc.sa_mask, SIGINT);
-	sigaddset(&atc.sa_mask, SIGQUIT);
-	sigaddset(&atc.sa_mask, SIGHUP);
-	sigaddset(&atc.sa_mask, SIGRTMIN);
-	sigaddset(&atc.sa_mask, SIGRTMIN + 1);
-
-	sigprocmask(SIG_BLOCK, &atc.sa_mask, &oldsig);
-
-	memset(&atc, 0, sizeof(struct sigaction));
-	atc.sa_flags = SA_SIGINFO;
-	atc.sa_sigaction = sig_handler;
-	if (sigaction(SIGINT, &atc, NULL) < 0)
-		printf("reg SIGINT failed\n");
-
-	if (sigaction(SIGQUIT, &atc, NULL) < 0)
-		printf("reg SIGQUIT failed\n");
-
-	if (sigaction(SIGHUP, &atc, NULL) < 0)
-		printf("reg SIGHUP failed\n");
-
-	if (sigaction(SIGRTMIN, &atc, NULL) < 0)
-		printf("reg SIGRTMIN failed\n");
-
-	if (sigaction(SIGRTMIN+1, &atc, NULL) < 0)
-		printf("reg SIGRTMIN+1 failed\n");
-
-	printf("pid: %d\n", getpid());
-	sleep(30);
-
-	sigprocmask(SIG_SETMASK, &oldsig, NULL);
+	int sat;
+	pthread_t tpid = 0;
+	for (int i = 0; i < THREADNUM; ++i){
+		pthread_create(&tpid, NULL, handler, NULL);
+		printf(" tpid: %ld\n", tpid);
+	}
+	
+	sleep(10);
 
 	return 0;
 }

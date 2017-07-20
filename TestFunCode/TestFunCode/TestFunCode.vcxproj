@@ -53,7 +53,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>D:\007.CodeStore\97.Github\funcode\nginx-nginx-51a4a41\src\core\;D:\007.CodeStore\97.Github\funcode\nginx-nginx-51a4a41\src\event\;D:\007.CodeStore\97.Github\funcode\nginx-nginx-51a4a41\src\event\modules\;D:\007.CodeStore\97.Github\funcode\nginx-nginx-51a4a41\src\http;D:\007.CodeStore\97.Github\funcode\nginx-nginx-51a4a41\src\mail;D:\007.CodeStore\97.Github\funcode\nginx-nginx-51a4a41\src\misc;D:\007.CodeStore\97.Github\funcode\nginx-nginx-51a4a41\src\os;D:\007.CodeStore\97.Github\funcode\nginx-nginx-51a4a41\src\stream;D:\007.CodeStore\97.Github\funcode\nginx-nginx-51a4a41\src\os\unix;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\007.CodeStore\97.Github\mynginx\nginx\src\core\;D:\007.CodeStore\97.Github\mynginx\nginx\src\event\;D:\007.CodeStore\97.Github\mynginx\nginx\src\event\modules\;D:\007.CodeStore\97.Github\mynginx\nginx\src\http;D:\007.CodeStore\97.Github\mynginx\nginx\src\mail;D:\007.CodeStore\97.Github\mynginx\nginx\src\misc;D:\007.CodeStore\97.Github\mynginx\nginx\src\os;D:\007.CodeStore\97.Github\mynginx\nginx\src\stream;D:\007.CodeStore\97.Github\mynginx\nginx\src\os\unix;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -301,7 +301,9 @@
     <ClCompile Include="..\..\..\mynginx\nginx\src\stream\ngx_stream_variables.c" />
     <ClCompile Include="..\..\..\mynginx\nginx\src\stream\ngx_stream_write_filter_module.c" />
     <ClCompile Include="..\..\daemon.cpp" />
+    <ClCompile Include="..\..\getpid_test.cpp" />
     <ClCompile Include="..\..\netserver.cpp" />
+    <ClCompile Include="..\..\signal_test.cpp" />
     <ClCompile Include="..\..\test.cpp" />
   </ItemGroup>
   <ItemGroup>
