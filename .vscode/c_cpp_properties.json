@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "name": "linux",
+            "includePath": [
+                "C:\\cygwin\\usr\\include",
+                "C:\\cygwin\\lib\\gcc\\x86_64-pc-cygwin\\5.4.0\\include",
+                "C:\\cygwin\\lib\\gcc\\x86_64-pc-cygwin\\5.4.0\\include\\c++\\*",
+                "C:\\cygwin\\lib\\gcc\\x86_64-pc-cygwin\\5.4.0\\include\\c++\\backward\\*",
+                "$(workspaceRoot)"
+            ],
+            "defines": [],
+            "intelliSenseMode": "clang-x64",
+            "browse": {
+                "path": [
+                    "C:\\cygwin\\usr\\include",
+                    "$(workspaceRoot)"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            }
+        }
+    ],
+    "version": 4
+}
