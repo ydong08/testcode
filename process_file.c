@@ -10,11 +10,11 @@
 int main()
 {
     int loop = 100;
-    const char* pptext = "1234567890";
+    const char* pptext = "1234567890\n";
     const char* pfile = "abc.txt";
    
     int cfd = open(pfile, O_CREAT|O_RDWR, 0664);
-    printf("file fd: %d\n", cfd);
+    printf("file fd1: %d\n", cfd);
     if (0 < cfd) {
         do {
             write(cfd, pptext, strlen(pptext)+1) ;
