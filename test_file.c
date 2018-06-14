@@ -10,6 +10,7 @@ int main(int argc, char **argv) {
 
 	int a = 1<<12, b = 1<<12;
 	int i = 0;
+	pid_t pid;
 
 	char *a_array = malloc(a);
 	char *b_array = malloc(b);
@@ -24,7 +25,7 @@ int main(int argc, char **argv) {
 		return -1;
 	}
 
-	switch (fork()) {
+	switch (pid = fork()) {
 	
 		case -1:
 			perror("fork() error");
@@ -47,10 +48,18 @@ int main(int argc, char **argv) {
 			break;
 	}
 
-	free(a_array);
-	free(b_array);
 
-	close(fd);
+	if (0 == pid)
+	{
+		free(a_array);
+		exit(0);
+	}
 
-	return 0;
+	if (0 < pid){
+		wait();
+		free(b_array);
+		close(fd);
+		exit(0);
+	}
+
 }

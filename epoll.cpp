@@ -98,7 +98,6 @@ int main()
                     perror("connfd<0");
                     return (1);
                 }
-                
 
                 char *str = inet_ntoa(clientaddr.sin_addr);
                 cout << "accapt a connection from " << str << endl;
@@ -134,14 +133,9 @@ int main()
 				printf("\n");
 				if (recvNum > 0)
 				{
-
 					send(sockfd, buf, recvNum, 0);
 				}
-				
-                    
             }
-          
-  
         }
     }
     return 0;

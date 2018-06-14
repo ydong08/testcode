@@ -7,7 +7,7 @@
 #include <fcntl.h>
 
 int main(int argc, char **argv) {
-
+	pid_t pid;
 	int a = 1<<12, b = 1<<12;
 	int i = 0;
 
@@ -24,8 +24,7 @@ int main(int argc, char **argv) {
 		return -1;
 	}
 
-	switch (fork()) {
-	
+	switch (pid = fork()) {
 		case -1:
 			perror("fork() error");
 			return -1;
@@ -47,10 +46,16 @@ int main(int argc, char **argv) {
 			break;
 	}
 
-	free(a_array);
-	free(b_array);
+	if (0 == pid){
+		free(a_array);
+		exit(0);
+	}
 
-	close(fd);
-
-	return 0;
+	if (0 < pid){
+		wait();
+		free(b_array);
+		close(fd);
+		exit(0);
+	}
 }
+
