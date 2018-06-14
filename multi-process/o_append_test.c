@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <sys/wait.h>
 
 int main(int argc, char **argv) {
 	pid_t pid;
@@ -52,10 +53,12 @@ int main(int argc, char **argv) {
 	}
 
 	if (0 < pid){
-		wait();
+		wait(NULL);
 		free(b_array);
 		close(fd);
 		exit(0);
 	}
+
+	return 0;
 }
 
