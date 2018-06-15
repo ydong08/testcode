@@ -44,18 +44,18 @@ int main(int argc, char **argv) {
 			perror("fork() error");
 			return -1;
 		case 0:
-			printf("parent\n");
+			printf("child\n");
 			for ( i=0; i < a; i += 64){
 				if (-1 == write(fd, a_array+i, 64)) {
-					perror("parent write");
+					perror("child write");
 				}
 			}
 			break;
 		default:
-			printf("child\n");
+			printf("parent\n");
 			for ( i=0; i<a; i += 64) {
 				if (-1 == write(fd, b_array+i, 64)) {
-					perror("child write");
+					perror("parent write");
 				}
 			}
 			break;
