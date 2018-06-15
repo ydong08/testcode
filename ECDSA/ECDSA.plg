@@ -1,0 +1,44 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: ECDSA - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP18C.tmp" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /Fp"Debug/ECDSA.pch" /Yu"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"G:\毕业论文\毕业论文\程序\MFC实现ECDSA\ECDSA\ECDSAView.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP18C.tmp" 
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP18D.tmp" with contents
+[
+/nologo /subsystem:windows /incremental:yes /pdb:"Debug/ECDSA.pdb" /debug /machine:I386 /out:"Debug/ECDSA.exe" /pdbtype:sept 
+".\Debug\ECCDlg.obj"
+".\Debug\ECDSA.obj"
+".\Debug\ECDSADoc.obj"
+".\Debug\ECDSAView.obj"
+".\Debug\MainFrm.obj"
+".\Debug\MINGWENDlg.obj"
+".\Debug\ModeDlg.obj"
+".\Debug\StdAfx.obj"
+".\Debug\TestBignumDlg.obj"
+".\Debug\TestDlg.obj"
+".\Debug\WeiShuDlg.obj"
+".\Debug\ECDSA.res"
+]
+Creating command line "link.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP18D.tmp"
+<h3>Output Window</h3>
+Compiling...
+ECDSAView.cpp
+g:\毕业论文\毕业论文\程序\mfc实现ecdsa\ecdsa\ecdsaview.cpp(4) : warning C4652: compiler option 'Generate Browser Info' inconsistent with precompiled header; current command-line option will override that defined in the precompiled header
+Linking...
+
+
+
+<h3>Results</h3>
+ECDSA.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>
