@@ -13,14 +13,17 @@ int main()
     int fd = open(pfile, O_CREAT|O_WRONLY, 0664);
     printf("file fd: %d\n", fd);
     write(fd, buf, 10);
+
     int newfd = dup(fd);
     memcpy(buf, "0123456789", sizeof("0123456789"));
     printf("file fd: %d\n",newfd);
     write(newfd, buf, 10);
+
     newfd = dup2(newfd, newfd+2);
     memcpy(buf, "opqrstuvwxyz", sizeof("opqrstuvwxyz"));
     printf("file fd: %d\n",newfd);
     write(newfd, buf, 10);
+
 
     return 0;
 }
