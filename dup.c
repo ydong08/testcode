@@ -24,6 +24,5 @@ int main()
     printf("file fd: %d\n",newfd);
     write(newfd, buf, 10);
 
-
     return 0;
 }
