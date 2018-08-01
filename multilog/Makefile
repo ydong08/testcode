@@ -1,5 +1,5 @@
 
-all:build buildso
+all:buildso build
 
 buildso:
 	g++ -g -Wall -shared -fPIC -o liblog.so writelog.cpp
