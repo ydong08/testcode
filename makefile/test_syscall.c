@@ -4,7 +4,7 @@
 #include<sys/syscall.h>
 #include<sys/types.h>
 
-int main(int argc, char* argv[])
+int pid_test(int argc, char* argv[])
 {
     pid_t pid = getpid();
     pid_t tid = syscall(SYS_gettid);

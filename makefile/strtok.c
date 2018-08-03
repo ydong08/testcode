@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int main()
+int strtok_test()
 {
     char pstr[] = "hello@world@this@is@a@test@stirng";
     char* pt = strtok(pstr, "@");

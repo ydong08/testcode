@@ -1,4 +1,6 @@
 
+#rebuild:clean
+
 all:buildso build
 
 buildso:
@@ -8,4 +10,4 @@ build:buildso
 	g++ -g -Wall -o elog main.cpp -L. -llog
 
 clean:
-	-rm -rf *so log*
+	-rm -rf *so log* elog
