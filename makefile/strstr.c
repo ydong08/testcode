@@ -1,7 +1,9 @@
+
+
 #include <stdio.h>
 #include <string.h>
 
-int str_test()
+int str_test(void)
 {
     const char* pSrc = "abcdefghijk";
     const char* pSub = "hji";
