@@ -7,7 +7,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-int file_test(int argc, char **argv) {
+int file_test(void) {
 
 	int a = 1<<12, b = 1<<12;
 	int i = 0;

@@ -19,7 +19,7 @@ uint64_t ntohll16(uint64_t val) {
      return  (((uint64_t) ntohl(val))  <<   16 )  +  ntohl(val  >>   16 ); 
 }  
 
-int  htonl_test() { 
+int  htonl_test(void) { 
     uint64_t hll  =   0x1122334455667788 ; 
 	printf( " PRIu64: %s, PRIX64: %s\n", PRIu64, PRIX64); 
     printf( " uint64: % " PRIu64 " \n " , hll); 
