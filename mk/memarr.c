@@ -17,7 +17,7 @@ void MemeryArray(int a[], int m, int b[], int n, int c[]){
 	}
 } 
 
-//½«ÓÐ¶þ¸öÓÐÐòÊýÁÐa[first...mid]ºÍa[mid...last]ºÏ²¢¡£
+//ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½a[first...mid]ï¿½ï¿½a[mid...last]ï¿½Ï²ï¿½ï¿½ï¿½
 void mergearray(int a[], int first, int mid, int last, int temp[])
 {
 	int i = first, j = mid + 1;
@@ -46,9 +46,9 @@ void mergesort(int a[], int first, int last, int temp[])
 	if (first < last)
 	{
 		int mid = (first + last) / 2;
-		mergesort(a, first, mid, temp);    //×ó±ßÓÐÐò
-		mergesort(a, mid + 1, last, temp); //ÓÒ±ßÓÐÐò
-		mergearray(a, first, mid, last, temp); //ÔÙ½«¶þ¸öÓÐÐòÊýÁÐºÏ²¢
+		mergesort(a, first, mid, temp);    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		mergesort(a, mid + 1, last, temp); //ï¿½Ò±ï¿½ï¿½ï¿½ï¿½ï¿½
+		mergearray(a, first, mid, last, temp); //ï¿½Ù½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÐºÏ²ï¿½
 	}
 }
 

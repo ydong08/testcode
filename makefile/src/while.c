@@ -11,7 +11,7 @@ void print(const char* p)
 }
 
 
-int main()
+int while_loop()
 {
     const char* ptrName = "castles";
     const char* ptrNode = "castles";

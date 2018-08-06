@@ -12,10 +12,20 @@
 
 
 #version 3.0
-vpath = src:../mk
-objects = $(wildcard *.o)
+VPATH = src:../mk
+objects = main.o strstr.o strtok.o test_file.o \
+		  test_syscall.o testhtonll.o
+build: CFLAGS = -g		   
 build: $(objects)
-	cc    -o main $(objects)
+	cc  $(CFLAGS)  -o main $(objects)
+	$(run_exec)
 
 clean:
 	-rm -rf main *.o
+
+exec:
+	pwd;cd ..;pwd
+
+define run_exec
+pwd;cd ..;pwd;cd logfile
+endef

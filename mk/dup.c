@@ -5,7 +5,7 @@
 #include <fcntl.h>
 #include <string.h>
 
-int main()
+int dup_test()
 {
     char buf[10] = {0};
     const char* pfile = "dup.txt";

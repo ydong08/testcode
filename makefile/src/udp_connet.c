@@ -15,7 +15,7 @@ char sendline[MAXLINE];
 char recvline[MAXLINE+1];
 struct sockaddr_in servaddr;
 
-int main(int argc, char **argv)
+int udp_connect(int argc, char **argv)
 {
 	if(argc != 2)
 	{
