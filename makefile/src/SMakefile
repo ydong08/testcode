@@ -1,0 +1,6 @@
+
+buildsrc: udp_connect.o while.o
+
+while.o:
+
+udp_connet.o:

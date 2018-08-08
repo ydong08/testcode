@@ -12,6 +12,7 @@
 
 
 #version 3.0
+include src/SMakefile
 VPATH = src:../mk
 objects = main.o strstr.o strtok.o test_file.o \
 		  test_syscall.o testhtonll.o
