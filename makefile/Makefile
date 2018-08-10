@@ -12,8 +12,16 @@
 
 
 #version 3.0
-include src/SMakefile
+#-include src/SMakefile
+#-include ../mk/MMakefile
 VPATH = src:../mk
+#vpath %.c ../mk src
+override CAST := a b c d e 
+override null :=
+override space := $(null)
+all:
+	@echo "CAST: " $(CAST)
+	@echo "space:" $(space) ":space"
 objects = main.o strstr.o strtok.o test_file.o \
 		  test_syscall.o testhtonll.o
 build: CFLAGS = -g		   

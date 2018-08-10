@@ -71,5 +71,5 @@ int udp_connect(int argc, char **argv)
 
 }
 
-http://blog.csdn.net/zhangskd/article/details/13631715
+//http://blog.csdn.net/zhangskd/article/details/13631715
 
