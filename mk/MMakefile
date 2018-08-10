@@ -1,0 +1,5 @@
+buildmk: dup.o memarr.o
+
+memarr.o:
+
+dup.o:
