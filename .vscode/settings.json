@@ -3,6 +3,8 @@
         "ostream": "c",
         "*.tcc": "cpp",
         "fstream": "cpp",
-        "cerrno": "cpp"
+        "cerrno": "cpp",
+        "system_error": "cpp",
+        "type_traits": "cpp"
     }
 }
