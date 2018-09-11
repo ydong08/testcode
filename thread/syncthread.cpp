@@ -21,6 +21,7 @@ void* addThread(void* p)
         loop = j;
     }
 
+    // return status
     int* pret = new int(loop);
     pthread_exit(pret);
 }
@@ -51,6 +52,25 @@ int main()
     delete (int*)ret;
 
     printf("\nloop equal %d\n", loop);
+    // monotonic clock
+    struct timespec monotonic_time;
+    memset(&monotonic_time, 0x00, sizeof(struct timespec));
+    syscall(SYS_clock_gettime, CLOCK_MONOTONIC_RAW, &monotonic_time);
+    struct tm tie;
+    memset(&tie, 0x00, sizeof(tie));
+
     return 0;
 }
+
+
+ 
+
+
+
+
+
+
+
+
+
 
