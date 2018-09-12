@@ -2,10 +2,19 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-//#include <sched.h>
+#include <sched.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <pthread.h>   //pthread.h 包含scehd.h
+#include <sys/sysinfo.h>
+
+/* 获取cpu的核数 */
+int cpu_count() {
+
+    return (int)sysconf(_SC_NPROCESSORS_ONLN); //
+    return (int)get_nprocs_conf();  //
+    return (int)get_nprocs();   //
+}
 
 void wast_time() {
     int b = 10000000;
@@ -68,15 +77,20 @@ int main() {
     }
 
     pthread_t tid;
-    retval = pthread_create(&tid, NULL, thread_func, NULL);
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_attr_setaffinity_np(&attr, sizeof(mask), &mask);
+    retval = pthread_create(&tid, &attr, thread_func, NULL);
     if (retval < 0) {
         perror("pthread_create");
     }
 
-    retval = pthread_create(&tid, NULL, thread_func1, NULL);
+    retval = pthread_create(&tid, &attr, thread_func1, NULL);
     if (retval < 0) {
         perror("pthread_create");
     }
 
 }
+
+
 
