@@ -4,6 +4,9 @@
 #include <pthread.h>
 #include <errno.h>
 #include <unistd.h>
+#include <time.h>
+#include <sys/syscall.h>
+#include <math.h>
 
 
 using namespace std;
@@ -56,15 +59,10 @@ int main()
     struct timespec monotonic_time;
     memset(&monotonic_time, 0x00, sizeof(struct timespec));
     syscall(SYS_clock_gettime, CLOCK_MONOTONIC_RAW, &monotonic_time);
-    struct tm tie;
-    memset(&tie, 0x00, sizeof(tie));
+    printf("CurTimeSec: %llf\n", monotonic_time.tv_sec + (monotonic_time.tv_nsec/powl(10, 9)));
 
     return 0;
 }
-
-
-
- 
 
 
 
