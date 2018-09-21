@@ -17,7 +17,7 @@ void* thread(void* p) {
      * */
     printf("tid[%ld] thread[%lu] asign new value: %d\n", syscall(SYS_gettid), pthread_self(), tmp);
     pthread_mutex_unlock(&mutex);
-    pthread_exit(NULL);
+    pthread_exit((void*)tmp);
 }
 
 int main() {
@@ -34,9 +34,13 @@ int main() {
     if (retval)
         perror("pthread_create");
 
-    pthread_join(tid, NULL);
-    pthread_join(tid2, NULL);
-    pthread_join(tid3, NULL);
+    void* st ;
+    pthread_join(tid, (void**)&st);
+    printf("tid st: %d\n", st);
+    pthread_join(tid2, (void**)&st);
+    printf("tid2 st: %d\n", st);
+    pthread_join(tid3, (void**)&st);
+    printf("tid3 st: %d\n", st);
     pthread_mutex_destroy(&mutex);
 
     return 0;
