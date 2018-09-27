@@ -18,6 +18,7 @@ pthread_cond_t  cond = PTHREAD_COND_INITIALIZER;
 //memset(&cattr, 0x00, sizeof(cattr));
 //pthread_cond_init(&cond, &cattr);
 bool sigFlag = false;
+struct timeval tmv = {2, 1000};
 void sigHandler(int signo, siginfo_t *p, void* po) {
     if (SIGALRM == signo) {
         sigFlag = true;
@@ -26,6 +27,7 @@ void sigHandler(int signo, siginfo_t *p, void* po) {
 }
 void handler(void* p) {
     printf("enter cancel handler: thread[%d]\n", *(int*)p);
+    (void)pthread_cond_destroy(&mutex);
 }
 
 void ignoreSig(int signo) {
@@ -38,36 +40,44 @@ void ignoreSig(int signo) {
 }
 
 void* thread1(void* p) {
-    ignoreSig(SIGALRM);
+    //ignoreSig(SIGALRM);
     //long tids = syscall(SYS_gettid);
     int tid = 1;
     pthread_cleanup_push(handler, &tid);
     while(1) {
-        printf("thread1 is running\n");
+        printf("thread1： begin lock\n");
         pthread_mutex_lock(&mutex);
+        printf("thread1： begin wait\n");
         pthread_cond_wait(&cond, &mutex);
-        printf("thread1 applied condition\n");
+        printf("thread1： begin unlock\n");
         pthread_mutex_unlock(&mutex);
-        sleep(6);
+        printf("thread1: end unlock\n");
+        select(0, NULL, NULL, NULL, &tmv);
     }
+    printf("thread1: begin pop\n");
     pthread_cleanup_pop(0);
+    printf("thread1: begin exit\n");
     pthread_exit((void*)1);
 }
 
 void* thread2(void* p) {
-    ignoreSig(SIGALRM);
+    //ignoreSig(SIGALRM);
     //long tids = syscall(SYS_gettid);
     int tid = 2;
     pthread_cleanup_push(handler, &tid);
-    while(1) {
-        printf("thread2 is running\n");
+    while(0 < *(int*)p) {
+        printf("thread2： begin lock\n");
         pthread_mutex_lock(&mutex);
+        printf("thread2： begin wait\n");
         pthread_cond_wait(&cond, &mutex);
-        printf("thread2 applied condition\n");
+        printf("thread2： begin unlock\n");
         pthread_mutex_unlock(&mutex);
-        sleep(6);
+        printf("thread2: end unlock\n");
+        select(0, NULL, NULL, NULL, &tmv);
     }
+    printf("thread2: begin pop\n");
     pthread_cleanup_pop(0);
+    printf("thread2: begin exit\n");
     pthread_exit((void*)2);
 }
 
@@ -95,20 +105,21 @@ bool isReachTime(void) {
     return sigFlag;
 }
 
+int loop = 10;
 int main() {
-    int loop = 10;
+    //int loop = 10;
     pthread_t tid1, tid2;
     pthread_create(&tid1, NULL, thread1, NULL);
-    pthread_create(&tid2, NULL, thread2, NULL);
+    //pthread_create(&tid2, NULL, thread2, NULL);
     //setTimer(2, 10);
     do {
-        if (isReachTime())
-            // 如果不调用signal或者broadcast,线程将保持睡眠状态，不会被唤醒执行
+        // if (isReachTime())
+        //     // 如果不调用signal或者broadcast,线程将保持睡眠状态，不会被唤醒执行
             pthread_cond_signal(&cond);
         if (loop == 1) {
-            pthread_cancel(tid1);
+            //pthread_cancel(tid1);
             usleep(1000);
-            pthread_cancel(tid2);
+            //pthread_cancel(tid2);
         }
 
         usleep(1000000);
@@ -116,23 +127,15 @@ int main() {
     
     void* st ;
     pthread_join(tid1, (void**)&st);
-    printf("tid1 st: %d\n", st);
+    printf("tid1 st: %ld\n", st);
 
-    pthread_join(tid2, (void**)&st);
-    printf("tid2 st: %d\n", st);
+    // pthread_join(tid2, (void**)&st);
+    // printf("tid2 st: %ld\n", st);
 
     pthread_mutex_destroy(&mutex);
     pthread_cond_destroy(&cond);
 
     return 0;
 }
-
-
-
-
-
-
-
-
 
 
