@@ -6,6 +6,7 @@
 #include<pthread.h>
 #include <locale.h>
 
+/* KP1 ~ KP5 */
 void *func(void *arg);
 void *func2(void *arg);
 int main()
@@ -49,7 +50,7 @@ void *func(void *arg)
   char* local = setlocale(LC_NUMERIC, "");
   printf("default locale: %s\n", local);
   memcpy(localbuf, local, strlen(local));
-  
+
   lcv = localeconv();
   printf("THOUSANDS SEP: %s\n", lcv->thousands_sep);
   printf("num = %'.2f\n", num);
