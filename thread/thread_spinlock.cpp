@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <pthread.h>
 
-static int snum = 100;
+static volatile int snum = 100;
 void* proc(void* p) {
     pthread_spinlock_t pint = *(pthread_spinlock_t*)p;
     for (int i = 0; i < 1000; ++i) {
