@@ -46,7 +46,6 @@ int main()
 	if (pthread_attr_setdetachstate(&tattr, PTHREAD_CREATE_DETACHED) != 0)
 		perror("set detach failed");
 
-
 	pthread_create(&pid, &tattr, thread_fun, NULL);
 
 	pthread_attr_destroy(&tattr);
