@@ -5,7 +5,12 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-/* 线程数据 是单个线程私有，其他线程不可见 */
+/* 线程数据 是单个线程私有，其他线程不可见 
+*  1. 全局线程变量
+*  2. 全局静态线程变量
+*  3. 局部静态线程变量 
+*/
+
 pthread_key_t key;
 
 void* thread_set(void* p) {
@@ -18,8 +23,7 @@ void* thread_set(void* p) {
         }
         select(0, NULL, NULL, NULL, &val);
     }
-    int* pval = &retval;
-    pthread_exit(&pval);
+    pthread_exit(&retval);
 }
 
 void* thread_get(void* p) {
@@ -74,3 +78,4 @@ int main() {
     return 0;
 
 }
+
