@@ -70,9 +70,14 @@ void* thread_get(void* p) {
     pthread_key_t key;
     void* pretval = NULL;
     int retval;
+    int oldtype;
     struct timeval val;
     pthread_mutex_t mtx = ((thread_info_t*)p)->mtx;
     pthread_cond_t cond = ((thread_info_t*)p)->cond;
+    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &oldtype);
+    printf("cancelstate: %d\n", oldtype);
+    pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, &oldtype);
+    printf("canceltype: %d\n", oldtype);
     pthread_cleanup_push(clear, NULL);
     do
     {
