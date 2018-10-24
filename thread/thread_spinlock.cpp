@@ -6,12 +6,12 @@
 
 static volatile int snum = 100;
 void* proc(void* p) {
-    pthread_spinlock_t pint = *(pthread_spinlock_t*)p;
+    pthread_spinlock_t* pint = (pthread_spinlock_t*)p;
     for (int i = 0; i < 1000; ++i) {
-        pthread_spin_lock(&pint);
+        pthread_spin_lock(pint);
         //pthread_spin_trylock(&pint);
         ++snum;
-        pthread_spin_unlock(&pint);
+        pthread_spin_unlock(pint);
     }
 
     pthread_exit(NULL);

@@ -6,13 +6,13 @@
 
 int data = 100;
 void* read1(void* p) {
-    pthread_rwlock_t pint = *(pthread_rwlock_t*)p;
+    pthread_rwlock_t* pint = (pthread_rwlock_t*)p;
     struct timespec ts = {1, 1000000}; //1us
     do 
     {
-        pthread_rwlock_rdlock(&pint);
+        pthread_rwlock_rdlock(pint);
         printf("R1 read: %d\n", data);
-        pthread_rwlock_unlock(&pint);
+        pthread_rwlock_unlock(pint);
         pselect(0, NULL, NULL, NULL, &ts, NULL); // pselect 不会更新ts的值
 
     } while(1);
@@ -20,13 +20,13 @@ void* read1(void* p) {
 }
 
 void* read2(void* p) {
-    pthread_rwlock_t pint = *(pthread_rwlock_t*)p;
+    pthread_rwlock_t* pint = (pthread_rwlock_t*)p;
     struct timespec ts = {1, 1000000};
     do 
     {
-        pthread_rwlock_rdlock(&pint);
+        pthread_rwlock_rdlock(pint);
         printf("R2 read: %d\n", data);
-        pthread_rwlock_unlock(&pint);
+        pthread_rwlock_unlock(pint);
         pselect(0, NULL, NULL, NULL, &ts, NULL);
 
     } while(1);
@@ -36,28 +36,28 @@ void* read2(void* p) {
 }
 
 void* write1(void* p) {
-    pthread_rwlock_t pint = *(pthread_rwlock_t*)p;
+    pthread_rwlock_t* pint = (pthread_rwlock_t*)p;
     struct timespec ts = {1, 1000000};
     do
     {
-        pthread_rwlock_wrlock(&pint);
+        pthread_rwlock_wrlock(pint);
         ++data;
         printf("W1 write: %d\n", data);
-        pthread_rwlock_unlock(&pint);
+        pthread_rwlock_unlock(pint);
         pselect(0, NULL, NULL, NULL, &ts, NULL);
     } while(1);
     pthread_exit(NULL);
 }
 
 void* write2(void* p) {
-    pthread_rwlock_t pint = *(pthread_rwlock_t*)p;
+    pthread_rwlock_t* pint = (pthread_rwlock_t*)p;
     struct timespec ts = {1, 1000000};
     do 
     {
-        pthread_rwlock_wrlock(&pint);
+        pthread_rwlock_wrlock(pint);
         ++data;
         printf("W2 write: %d\n", data);
-        pthread_rwlock_unlock(&pint);
+        pthread_rwlock_unlock(pint);
         pselect(0, NULL, NULL, NULL, &ts, NULL);
     } while(1);
     pthread_exit(NULL);
