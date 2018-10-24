@@ -68,8 +68,10 @@ int main() {
     int retval;
     pthread_t tidr1, tidr2, tidw1, tidw2;
     pthread_rwlock_t rw;
+    int pshared;
     pthread_rwlockattr_t rwattr;
     pthread_rwlockattr_init(&rwattr);
+    pthread_rwlockattr_getpshared(&rwattr, &pshared);
     pthread_rwlock_init(&rw, &rwattr);
 
     retval = pthread_create(&tidr1, NULL, read1, (void*)&rw);
@@ -104,3 +106,7 @@ int main() {
 
     return 0;
 }
+
+
+
+
