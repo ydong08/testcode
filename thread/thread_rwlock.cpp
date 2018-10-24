@@ -98,6 +98,7 @@ int main() {
     pthread_join(tidr2, NULL);
     pthread_join(tidw1, NULL);
     pthread_join(tidw2, NULL);
+    
     pthread_rwlockattr_destroy(&rwattr);
     pthread_rwlock_destroy(&rw);
 
