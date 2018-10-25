@@ -58,6 +58,6 @@ int main() {
     pthread_barrier_destroy(&bat);
 
     return 0;
-
 }
 #endif 
+

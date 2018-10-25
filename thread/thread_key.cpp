@@ -111,6 +111,8 @@ void* thread_get(void* p) {
         } else {
             printf("get num = %d\n", *(int*)pretval);
         }
+
+        pthread_key_delete(key);
         fflush(stdout);
         sAge++;
         pthread_mutex_unlock(&mtx);
