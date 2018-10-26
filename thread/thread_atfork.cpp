@@ -8,7 +8,7 @@
 #include <unistd.h>
 
 
-/* KP1 ~ KP5 */
+/* KP1 ~ KP7 */
 int data;
 pthread_mutex_t mtx;
 void* proc(void* p) {
@@ -91,7 +91,7 @@ int main() {
         wait(NULL);
     } 
 
-    struct timespec ts = {10, 1000000};
+    struct timespec ts = {2, 1000000};
     nanosleep(&ts, NULL);
     pthread_join(tid, NULL);
     pthread_mutex_destroy(&mtx);
