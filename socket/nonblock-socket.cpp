@@ -103,7 +103,7 @@ int epoll_version(int *fd) {
 
 int main(int argc, char** argv) {
     string ip = "127.0.0.1";
-    int port = 25698;
+    int port = 60001;
     int c_fd, flags, ret;
     struct sockaddr_in s_addr;
     memset(&s_addr, 0, sizeof (s_addr));

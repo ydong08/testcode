@@ -46,13 +46,12 @@ int main()
     char line[MAXLINE];
     socklen_t clilen;
 
-    portnumber = 5000;
+    portnumber = 60001;
 
     //声明epoll_event结构体的变量,ev用于注册事件,数组用于回传要处理的事件
-
     struct epoll_event ev,events[20];
-    //生成用于处理accept的epoll专用的文件描述符
 
+    //生成用于处理accept的epoll专用的文件描述符
     epfd=epoll_create(256);
     struct sockaddr_in clientaddr;
     struct sockaddr_in serveraddr;
@@ -77,21 +76,20 @@ int main()
     epoll_ctl(epfd,EPOLL_CTL_ADD,listenfd,&ev);
 
     maxi = 0;
-
     int bOut = 0;
     for ( ; ; )
     {
         if (bOut == 1)
             break;
         //等待epoll事件的发生
-
         nfds=epoll_wait(epfd,events,20,-1);
+
         //处理所发生的所有事件
         cout << "\nepoll_wait returns\n";
-
         for(i=0;i<nfds;++i)
         {
-            if(events[i].data.fd==listenfd)//如果新监测到一个SOCKET用户连接到了绑定的SOCKET端口，建立新的连接。
+            //如果新监测到一个SOCKET用户连接到了绑定的SOCKET端口，建立新的连接。
+            if(events[i].data.fd==listenfd)
             {
                 connfd = accept(listenfd,(sockaddr *)&clientaddr, &clilen);
                 if(connfd<0){
@@ -101,20 +99,20 @@ int main()
 
                 char *str = inet_ntoa(clientaddr.sin_addr);
                 cout << "accapt a connection from " << str << endl;
-                //设置用于读操作的文件描述符
 
+                //设置用于读操作的文件描述符
                 setnonblocking(connfd);
                 ev.data.fd=connfd;
                 //设置用于注测的读操作事件
-
                 ev.events=EPOLLIN | EPOLLET;
                 //ev.events=EPOLLIN;
 
                 //注册ev
                 epoll_ctl(epfd,EPOLL_CTL_ADD,connfd,&ev);
             }
-            else if(events[i].events & EPOLLIN)//如果是已经连接的用户，并且收到数据，那么进行读入。
+            else if(events[i].events & EPOLLIN)
             {
+                //如果是已经连接的用户，并且收到数据，那么进行读入。
                 cout << "EPOLLIN" << endl;
                 if ( (sockfd = events[i].data.fd) < 0)
                     continue;
@@ -123,18 +121,18 @@ int main()
                 int recvNum = 0;
                 int count = 0;
                 bool bReadOk = false;
+
                 // 确保sockfd是nonblocking的
                 recvNum = recv(sockfd, buf, 1024, 0);
-				
 				for (int i = 0; i < recvNum; ++i)
 				{
 					printf("%02x ", buf[i]);
 				}
 				printf("\n");
-				if (recvNum > 0)
-				{
-					send(sockfd, buf, recvNum, 0);
-				}
+				// if (recvNum > 0)
+				// {
+				// 	send(sockfd, buf, recvNum, 0);
+				// }
             }
         }
     }
