@@ -4,7 +4,7 @@
 #define HOST_PORT             (3389)
 
 #define ENABLE_SERVER
-#define ENABLE_CLIENT
+//#define ENABLE_CLIENT
 /******* 服务器程序  (server.c) ************/ 
 #include <stdlib.h> 
 #include <stdio.h> 
@@ -67,7 +67,8 @@ int main(int argc, char *argv[]) {
    while(1) 
    { 
         /* 服务器阻塞,直到客户程序建立连接  */                 
-        sin_size=sizeof(struct sockaddr_in);                
+        sin_size=sizeof(struct sockaddr_in);  
+        printf("begin to accept\n");              
         if((new_fd=accept(sockfd,(struct sockaddr *)(&client_addr),&sin_size))==-1) 
         { 
             fprintf(stderr,"Accept error:%s\n\a",strerror(errno));                         
@@ -77,29 +78,22 @@ int main(int argc, char *argv[]) {
         fprintf(stderr,"Server get connection from %s\n", inet_ntoa(client_addr.sin_addr)); 
         do
         {
+            error = 0;
             memset(&world, 0x00, sizeof(world));
-            retval = recv(new_fd, world, sizeof(world), 0);
             getsockopt(new_fd, SOL_SOCKET, SO_ERROR, &error, &len);
-            if (0 != error) {
-                printf("close newfd\n");nhn 
+            retval = recv(new_fd, world, sizeof(world), 0);
+            if (0 == retval) {
+                printf("close newfd: %d\n", error); 
                 close(new_fd);
                 break;
             }
             if (0 < retval){
-                printf("Recv: %s\n", world);
+                printf("Recv: %d|%s\n", retval, world);
+                if (0 < (retval = send(new_fd, world, retval, 0)))
+                    printf("Send: %d|%s\n", retval, world);
             }
             usleep(1000000);
-        } while(1);
-#if 0
-        if(write(new_fd,hello,strlen(hello))==-1)//if(send(new_fd,hello,strlen(hello),0)==-1)             
-        { 
-             fprintf(stderr,"Write Error:%s\n",strerror(errno));                        
-             exit(1); 
-        } 
-        /* 这个通讯已经结束 */                 
-        close(new_fd); 
-        /* 循环下一个     */  
-#endif          
+        } while(1);         
     }   
     close(sockfd);        
     exit(0); 
