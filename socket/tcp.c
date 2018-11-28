@@ -12,10 +12,12 @@
 #include <string.h> 
 #include <unistd.h> 
 #include <netdb.h> 
+#include <fcntl.h>
 #include <sys/socket.h> 
 #include <netinet/in.h> 
 #include <sys/types.h> 
 #include <arpa/inet.h> 
+#include <linux/tcp.h>
 
 #ifdef ENABLE_SERVER
 int main(int argc, char *argv[]) { 
@@ -23,10 +25,12 @@ int main(int argc, char *argv[]) {
     struct sockaddr_in server_addr;         
     struct sockaddr_in client_addr;         
     int sin_size,portnumber; 
-    char hello[]="Hello! Are You Fine?\n"; 
     char world[64] = {0};
     int retval = 0; 
-    int len, error = 0;
+    int len;
+    struct tcp_info info;
+    int flags = 0;
+    int reuseaddr = 1;
 #if 0      
     if(argc!=2)        
     { 
@@ -45,6 +49,17 @@ int main(int argc, char *argv[]) {
          fprintf(stderr,"Socket error:%s\n\a",strerror(errno));                 
          exit(1);         
     } 
+    // reuseaddr
+    setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, (void*)&reuseaddr, sizeof(reuseaddr));
+
+    // keeplive
+    int keepAlive = 1; // 开启keepalive属性
+    int keepIdle = 30; // 如该连接在60秒内没有任何数据往来,则进行探测 
+    int keepInterval = 5; // 探测时发包的时间间隔为5 秒
+    int keepCount = 3; // 探测尝试的次数.如果第1次探测包就收到响应了,则后2次的不再发.
+
+   
+
     /* 服务器端填充 sockaddr结构  */  
     memset(&server_addr, 0, sizeof(struct sockaddr_in)); 
     portnumber = HOST_PORT;
@@ -69,21 +84,36 @@ int main(int argc, char *argv[]) {
         /* 服务器阻塞,直到客户程序建立连接  */                 
         sin_size=sizeof(struct sockaddr_in);  
         printf("begin to accept\n");              
-        if((new_fd=accept(sockfd,(struct sockaddr *)(&client_addr),&sin_size))==-1) 
+        if((new_fd=accept(sockfd,(struct sockaddr *)(&client_addr),(socklen_t*)&sin_size))==-1) 
         { 
             fprintf(stderr,"Accept error:%s\n\a",strerror(errno));                         
             exit(1);                 
         } 
-         
-        fprintf(stderr,"Server get connection from %s\n", inet_ntoa(client_addr.sin_addr)); 
+        flags = fcntl(new_fd, F_GETFL, 0);
+        fcntl(new_fd, F_SETFL, flags|O_NONBLOCK);
+
+        setsockopt(new_fd, SOL_SOCKET, SO_KEEPALIVE, (int[]){1}, sizeof(int));
+        setsockopt(new_fd, IPPROTO_TCP, TCP_KEEPIDLE, (int[]){30}, sizeof(int));
+        setsockopt(new_fd, IPPROTO_TCP, TCP_KEEPINTVL, (int[]){5}, sizeof(int));
+        setsockopt(new_fd, IPPROTO_TCP, TCP_KEEPCNT, (int[]){3}, sizeof(int));
+        fprintf(stderr,"Server get connection from %s\n", inet_ntoa(client_addr.sin_addr));
+
         do
         {
-            error = 0;
             memset(&world, 0x00, sizeof(world));
-            getsockopt(new_fd, SOL_SOCKET, SO_ERROR, &error, &len);
+            // len = sizeof(info);
+            // memset(&info, 0x00, sizeof(info));
+            // getsockopt(new_fd, IPPROTO_TCP, TCP_INFO, &info, (socklen_t*)&len);
+            // printf("tcpi_state: %d\n", info.tcpi_state);
+            // if (1 != info.tcpi_state) {
+            //     printf("close newfd: %d\n", errno); 
+            //     close(new_fd);
+            //     break;
+            // }
+
             retval = recv(new_fd, world, sizeof(world), 0);
-            if (0 == retval) {
-                printf("close newfd: %d\n", error); 
+            if (retval < 0 && ETIMEDOUT == errno) {
+                printf("close newfd\n"); 
                 close(new_fd);
                 break;
             }
