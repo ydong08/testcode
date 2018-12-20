@@ -1,5 +1,5 @@
-#ifndef CONSTRUCTOR_BASE_CONSTRUCTOR_BASE_H_
-#define CONSTRUCTOR_BASE_CONSTRUCTOR_BASE_H_
+#ifndef CONSTRUCTOR_BASE_BASE_H_
+#define CONSTRUCTOR_BASE_BASE_H_
 
 namespace constructor {
 
@@ -24,15 +24,7 @@ DISALLOW_IMPLICIT_CONSTRUCTORS(classname)   \
  private:
  
 
-class CConstructorBase {
- public:
-  CConstructorBase(void);
-  ~CConstructorBase(void);
-  explicit CConstructorBase(int);
 
- private: 
-  int flag_;
-};
 
 }
-#endif   // CONSTRUCTOR_BASE_CONSTRUCTOR_BASE_H_
+#endif   // CONSTRUCTOR_BASE_BASE_H_
