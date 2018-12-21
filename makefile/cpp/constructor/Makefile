@@ -4,7 +4,7 @@
 INC := -I. -Ibase -Isources
 CDEFS := -DMAKEFILES -DTEST_MK=6
 CXXFLAG := -g -Wall -std=c++11
-CXXFLAGS += ${CDEFS}
+CXXFLAG += ${CDEFS}
 LINKLIB := -lpthread -lrt
 
 vpath % .
