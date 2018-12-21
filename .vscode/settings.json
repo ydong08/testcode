@@ -17,6 +17,8 @@
         "xlocale": "c",
         "xiosbase": "c",
         "tcp.h": "c",
-        "inet.h": "c"
+        "inet.h": "c",
+        "iostream": "cpp",
+        "*.inc": "cpp"
     }
 }
