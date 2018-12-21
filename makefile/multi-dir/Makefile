@@ -9,7 +9,7 @@ make_module_cl :=$(MAKE) clean -C $(1)
 all:$(Target)
 
 $(Target):mco
-	$(CXX) $(CXXFLAGS) $(INC) $(allobjs) -o $@ $(DEPS)
+	$(CXX) $(CXXFLAGS) $(INC) -o $@ $(allobjs) $(DEPS)
 	@echo "generate target done"
 
 mco:
@@ -20,6 +20,7 @@ mco:
 mcl:
 	$(foreach m,$(modules),$(call $(make_module_cl),$(m)))
 	@echo "modules clean done"
+
 
 clean:
 	$(RM) $(Target)
