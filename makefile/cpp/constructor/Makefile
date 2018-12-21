@@ -2,7 +2,9 @@
 # := 先定义再使用
 # = 可以先使用,后面定义
 INC := -I. -Ibase -Isources
-LINK := -g -Wall -std=c++11
+CDEFS := -DMAKEFILES -DTEST_MK=6
+CXXFLAG := -g -Wall -std=c++11
+CXXFLAGS += ${CDEFS}
 LINKLIB := -lpthread -lrt
 
 vpath % .
@@ -15,17 +17,17 @@ vpath %.cc sources
 OBJ= main.o base.o constructor.o
 #all: $(OBJ)
 #        @echo "$(CXX)"
-#        $(CXX) $(LINK) $^ -o $@ $(LINKLIB)
+#        $(CXX) $(CXXFLAG) $^ -o $@ $(LINKLIB)
 #$(OBJ): %.o : %.cc
-#        $(CXX) -c $(LINK) $(INC) $< -o $@
+#        $(CXX) -c $(CXXFLAG) $(INC) $< -o $@
 #        @echo "Tar: $@, first dep: $<, all dep: $^"
 
 all: $(OBJ)
 	@echo "$(CXX)"
-	$(CXX) $(LINK) $(INC) $^ -o $@ $(LINKLIB)
+	$(CXX) $(CXXFLAG) $(INC) $^ -o $@ $(LINKLIB)
 
 %.o: %.cc
-	$(CXX) -c $(LINK) $(INC) $< -o $@
+	$(CXX) -c $(CXXFLAG) $(INC) $< -o $@
 	@echo "Tar: $@, first dep: $<, all dep: $^"
 
 clean:
