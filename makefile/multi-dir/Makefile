@@ -9,7 +9,7 @@ make_module_cl := $(MAKE) clean -C $(1)
 all:$(Target)
 
 $(Target):mco
-	$(CXX) $(CXXFLAGS) $(INC) $(allobj) -o $@ $(DEPS)
+	$(CXX) $(CXXFLAGS) $(INC) $(allobjs) -o $@ $(DEPS)
 	@echo "generate target done"
 
 mco:
