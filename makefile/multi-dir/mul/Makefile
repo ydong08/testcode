@@ -2,7 +2,9 @@
 
 include ../scripts/Makefile
 
-#.PHONY: all clean
+.PHONY: all
+
+all: $(objs)
 
 $(objs): %.o : %.cc
 	$(CXX) -c $(CXXFLAGS) $(INC) $< -o $@
