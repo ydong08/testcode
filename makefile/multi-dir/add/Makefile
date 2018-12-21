@@ -4,6 +4,7 @@ include ../scripts/Makefile
 .PHONY: all
 
 all: $(objs)
+	@echo "$(sources)"
 	@echo "$(objs)"
 
 $(objs): %.o : %.cc
