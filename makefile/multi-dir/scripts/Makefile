@@ -1,6 +1,6 @@
 
 
-Target := main
+Target := bin
 CXXFLAGS = -g -Wall -O3
 INC = 
 DEPS = 
