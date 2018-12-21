@@ -2,7 +2,7 @@
 
 include ../scripts/Makefile
 
-.PHONY: all clean
+#.PHONY: all clean
 
 all: $(objs)
 
