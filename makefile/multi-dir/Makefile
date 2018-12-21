@@ -13,11 +13,11 @@ $(Target):mco
 	-@echo "generate target done"
 
 mco:
-	$(foreach m, $(modules), $(call $(make_module_com), $(m)))
+	$(foreach m,$(modules),$(call $(make_module_com),$(m)))
 	@echo "modules compile done"
 
 mcl:
-	$(foreach m, $(modules), $(call $(make_module_cl), $(m)))
+	$(foreach m,$(modules),$(call $(make_module_cl),$(m)))
 	@echo "modules clean done"
 
 clean:
