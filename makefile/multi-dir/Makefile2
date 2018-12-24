@@ -9,7 +9,7 @@ INC :=
 
 # source files
 sources := $(wildcard */*.cc)
-puresrc := $(notdir sources)
+puresrc := $(notdir $(sources))
 objects := $(addprefix $(OBJPATH)/, $(puresrc:%.cc=%.o))
 
 # compile function
@@ -22,6 +22,9 @@ endef
 .PHONY: all clean
 
 all:
+	@echo sources: $(sources)
+	@echo puresrc: $(puresrc)
+	@echo objects: $(objects)
 	$(foreach src,$(sources), $(eval $(call create_objs,$(src))))
 	$(CXX) $(CXXFLAGS) -o $@ $(objects) 
 
