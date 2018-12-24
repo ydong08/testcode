@@ -10,7 +10,7 @@ INC :=
 # source files
 sources := $(wildcard */*.cc)
 puresrc := $(notdir sources)
-objects := $(addprefix $(OBJPATH)/ $(puresrc:%.cc=%.o))
+objects := $(addprefix $(OBJPATH)/, $(puresrc:%.cc=%.o))
 
 # compile function
 define create_objs
