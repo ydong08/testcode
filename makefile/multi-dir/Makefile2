@@ -8,7 +8,7 @@ OBJPATH := out
 INC := 
 
 # source files
-sources := $(wildcard */*.cc)
+sources := $(foreach m,$(modules),$(wildcard $(m)/src/*.cc))
 puresrc := $(notdir $(sources))
 objects := $(addprefix $(OBJPATH)/, $(puresrc:%.cc=%.o))
 
