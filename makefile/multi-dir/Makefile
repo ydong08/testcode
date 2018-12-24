@@ -1,7 +1,7 @@
 
 include scripts/Makefile
 
-define make_module_com 
+define make_module_com
 $(MAKE) -C $(1)
 endef
 
@@ -9,7 +9,7 @@ define make_module_cl
 $(MAKE) clean -C $(1)
 endef
 
-.PHONY: all mco mcl clean
+.PHONY:all mco mcl clean
 
 all:$(Target)
 
