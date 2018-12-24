@@ -9,8 +9,8 @@ include scripts/Makefile
 #$(MAKE) clean -C $(1)
 #endef
 
-make_module_com = $(MAKE) -C $(1)
-make_module_cl = $(MAKE) clean -C $(1)
+make_module_com = $(MAKE) -C $(1);
+make_module_cl = $(MAKE) clean -C $(1);
 
 .PHONY:all mco mcl clean
 
@@ -22,11 +22,11 @@ $(Target):mco
 
 mco:
 	@echo "modules: $(modules)"
-	@echo $(foreach mo,$(modules),$(eval $(call $(make_module_com),$(mo))))
+	$(foreach mo,$(modules),$(call make_module_com,$(mo)))
 	@echo "modules compile done"
 
 mcl:
-	@echo $(foreach mo,$(modules),$(eval $(call $(make_module_cl),$(mo))))
+	$(foreach mo,$(modules),$(call make_module_cl,$(mo)))
 	@echo "modules clean done"
 
 
