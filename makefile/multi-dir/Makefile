@@ -22,14 +22,15 @@ $(Target):mco
 
 mco:
 	@echo "modules: $(modules)"
-	$(foreach mo,$(modules),$(call make_module_com,$(mo)))
+	$(foreach mo,$(modules),$(eval $(call make_module_com,$(mo))))
 	@echo "modules compile done"
 
 mcl:
+	@echo "modules: $(modules)"
 	$(foreach mo,$(modules),$(call make_module_cl,$(mo)))
 	@echo "modules clean done"
 
 
-clean:
+clean: mcl
 	$(RM) $(Target)
 	@echo "clean target done"
