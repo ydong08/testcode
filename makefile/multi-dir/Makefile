@@ -19,11 +19,11 @@ $(Target):mco
 
 mco:
 	@echo "modules: $(modules)"
-	@echo $(foreach mo, $(modules), $(call make_module_com, $(mo)))
+	@echo $(foreach mo,$(modules),$(eval $(call make_module_com,$(mo))))
 	@echo "modules compile done"
 
 mcl:
-	@echo $(foreach mo, $(modules), $(call make_module_cl, $(mo)))
+	@echo $(foreach mo,$(modules),$(eval $(call make_module_cl,$(mo))))
 	@echo "modules clean done"
 
 
