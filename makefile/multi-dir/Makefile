@@ -4,7 +4,7 @@ include scripts/Makefile
 
 
 
-.PHONY:all mco mcl clean
+.PYHONY:all mco mcl clean
 
 
 
