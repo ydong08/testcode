@@ -4,7 +4,7 @@ include scripts/Makefile
 make_module_com = $(MAKE) -C $(1);
 make_module_cl = $(MAKE) clean -C $(1);
 
-.PHONY:all mco mcl clean
+.PYHONY:all mco mcl clean
 
 all:$(Target)
 
