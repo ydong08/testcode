@@ -1,21 +1,30 @@
 
 include scripts/Makefile
 
+
 #define make_module_com
 #$(MAKE) -C $(1)
 #endef
 
+#define make_module_cl
+#$(MAKE) clean -C $(1)
+#endef
 
+make_module_com = $(MAKE) -C $(1);
+make_module_cl = $(MAKE) clean -C $(1);
 
-# compile function
-define create_objs
-$$($(1):%.cc=%.o):$(1)
-	$$(CXX) $$(CXXFLAGS) $$(INC) $$< -o $$(OBJPATH)/$$(notdir $$@)
-endef
+.PHONY:all mco mcl clean
 
+all:$(Target)
 
+$(Target):mco
+	$(CXX) $(CXXFLAGS) $(INC) -o $@ $(allobjs) $(DEPS)
+	@echo "generate target done"
 
-	-rm -rf $(objects) all
+mco:
+	@echo "modules: $(modules)"
+	$(foreach mo,$(modules),$(eval $(call make_module_com,$(mo))))
+	@echo "modules compile done"
 
 mcl:
 	@echo "modules: $(modules)"
@@ -26,3 +35,4 @@ mcl:
 clean: mcl
 	$(RM) $(Target)
 	@echo "clean target done"
+
