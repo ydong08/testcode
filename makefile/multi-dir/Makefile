@@ -1,36 +1,36 @@
 
 include scripts/Makefile
 
-#define make_module_com
-#$(MAKE) -C $(1)
-#endef
 
-#define make_module_cl
-#$(MAKE) clean -C $(1)
-#endef
+# variable
+CXXFLAGS := -g -Wall -O3
+OBJPATH := out
+INC := 
 
-make_module_com = $(MAKE) -C $(1);
-make_module_cl = $(MAKE) clean -C $(1);
+# source files
+sources := $(foreach m,$(modules),$(wildcard $(m)/src/*.cc))
+puresrc := $(notdir $(sources))
+objects := $(addprefix $(OBJPATH)/, $(puresrc:%.cc=%.o))
 
-.PHONY:all mco mcl clean
+# compile function
+define create_objs
+$$($(1):%.cc=%.o):$(1)
+	@echo "$<: $$<"
+	@echo "$@: $$@"
+	$$(CXX) $$(CXXFLAGS) $$(INC) $$< -o $$(OBJPATH)/$$(notdir $$@)
+endef
 
-all:$(Target)
+# link 
+.PHONY: all clean
 
-$(Target):mco
-	$(CXX) $(CXXFLAGS) $(INC) -o $@ $(allobjs) $(DEPS)
-	@echo "generate target done"
+all:
+	@echo sources: $(sources)
+	@echo puresrc: $(puresrc)
+	@echo objects: $(objects)
+	@echo 
+	$(foreach s,$(sources),$(eval $(call create_objs,$(s))))
+	$(CXX) $(CXXFLAGS) -o $@ $(objects) 
 
-mco:
-	@echo "modules: $(modules)"
-	$(foreach mo,$(modules),$(eval $(call make_module_com,$(mo))))
-	@echo "modules compile done"
+clean:
+	-rm -rf $(objects) all
 
-mcl:
-	@echo "modules: $(modules)"
-	$(foreach mo,$(modules),$(call make_module_cl,$(mo)))
-	@echo "modules clean done"
-
-
-clean: mcl
-	$(RM) $(Target)
-	@echo "clean target done"

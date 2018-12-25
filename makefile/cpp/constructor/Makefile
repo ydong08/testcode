@@ -11,8 +11,8 @@ vpath % .
 vpath %.inc base
 vpath %.cc sources
 	
-#	@echo "$(who)"
-#	@echo "$(curpath)"
+$(eval echo $(who))
+$(eval echo $(curpath))
 
 OBJ= main.o base.o constructor.o
 #all: $(OBJ)
