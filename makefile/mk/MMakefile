@@ -7,10 +7,10 @@ CXXFLAGS := -g -Wall -std=c++11
 buildmk: dup.o memarr.o
 	$(CXX) $^ -o $@
 
-memarr.o:memarr.cpp
+memarr.o:memarr.c
 	$(CXX) -c $(CXXFLAGS) $< -o $@
 
-dup.o:dum.cpp
+dup.o:dum.c
 	$(CXX) -c $(CXXFLAGS) $< -o $@
 
 
