@@ -1,0 +1,44 @@
+/*构造、析构、拷贝、赋值代码范例*/
+
+#include<iostream>
+using namespace std;
+class String {
+public:
+   String (const char* psz = NULL) {
+      if (psz == NULL) {//传入实参是空指针时，则...
+         m_psz = new char[1];
+         m_psz[0] = '\0';
+      }   
+      else {
+         m_psz = new char[strlen(psz) + 1]; 
+         strcpy (m_psz, psz);
+      }   
+   }   
+   ~String (void) {
+      delete[] m_psz;
+//    m_psz = NULL;
+   }   
+   String (const String& that) {
+      if (psz == NULL) {
+      m_psz = new char[1];
+      m_psz = '\0';
+   }
+      else {
+         m_psz = new char[strlen(that.m_psz)+1];
+         strcpy (m_psz, that.m_psz);
+      }
+   }
+   String& operator= (const String& rhs) {
+      if (&rhs != this) {
+         char* psz = new char[strlen(rhs.m_psz)+1];
+         delete[] m_psz;
+         m_psz = strcpy (psz, rhs.m_psz);
+      }
+      return *this;
+   }
+
+   .......
+private:
+   char* m_psz;
+};
+ 
