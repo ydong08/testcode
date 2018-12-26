@@ -1,5 +1,19 @@
+
+CXXFLAGS := -g -Wall -std=c++11
+
+.PHONY: buildmk clean
+
+
 buildmk: dup.o memarr.o
+	$(CXX) $^ -o $@
 
-memarr.o:
+memarr.o:memarr.cpp
+	$(CXX) -c $(CXXFLAGS) $< -o $@
 
-dup.o:
+dup.o:dum.cpp
+	$(CXX) -c $(CXXFLAGS) $< -o $@
+
+
+clean:
+	-$(RM) *.o buildmk
+
