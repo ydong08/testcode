@@ -5,6 +5,7 @@
 #include <string.h>
 #include <time.h>
 #include <signal.h>
+#include <bits/siginfo.h>
 
 // union sigval {          /* Data passed with notification */
 //     int     sival_int;         /* Integer value */
@@ -39,7 +40,7 @@ int main() {
   memset(&sgt, 0x00, sizeof(sgt));
   sgt.sigev_notify = SIGEV_SIGNAL;
   sgt.sigev_signo = SIGRTMIN+10;
-  sgt.sigev_value = 0x1234; // data pass
+  sgt.sigev_value.sival_int = 0x1234; // data pass
   sgt.sigev_notify_function = NULL;
   sgt.sigev_notify_attributes = NULL;
   sgt.sigev_notify_thread_id = 0;
