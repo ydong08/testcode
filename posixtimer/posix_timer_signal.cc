@@ -95,7 +95,7 @@ int main() {
       memset(&its, 0x00, sizeof(its));
       its.it_interval.tv_sec = 0;
       its.it_interval.tv_nsec = 0;
-      its.it_value.tv_sec = 0;
+      its.it_value.tv_sec = 2;
       its.it_value.tv_nsec = 0;
       retval = timer_settime(trt, TIMER_ABSTIME, &its, &oits);
       if (retval < 0) {
