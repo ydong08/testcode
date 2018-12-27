@@ -74,8 +74,8 @@ int main() {
 
     // 7. CLOCK_TAI
     memset(&ts, 0x00, sizeof(ts));
-    clock_gettime(CLOCK_BOOTTIME, &ts);
-    printf("clock bootime         : %ldus\n", ts.tv_sec*1000000 + ts.tv_nsec/1000);  // us
+    clock_gettime(CLOCK_TAI, &ts);
+    printf("clock tai             : %ldus\n", ts.tv_sec*1000000 + ts.tv_nsec/1000);  // us
 
 
     return 0;
