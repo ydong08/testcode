@@ -40,6 +40,8 @@ int main() {
     memset(tbuf, 0x00, sizeof(tbuf));
     strftime(tbuf, sizeof(tbuf), "%c", &tms);
     printf("strftime: %s\n", tbuf);
+	strftime(tbuf, sizeof(tbuf), "%I:%M %p", &tms);
+    printf("strftime: %s\n", tbuf);
 
     // time_t -> fix time string
     printf("ctime: %s\n", ctime_r(&tt, tbuf));
