@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <time.h>
+#include <sys/time.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -8,13 +9,22 @@
 int main() {
     struct tm tms;
     memset(&tms, 0x00, sizeof(tms));
+    struct timeval tv;
+    memset(&tv, 0x00, sizeof(tv));
+    struct timespec ts;
+    memset(&ts, 0x00, sizeof(ts));
     const int TIME_STRING_LEN = 32;
     char tbuf[TIME_STRING_LEN] = {0};
 
     /*######### time_t -> time string ###########*/
-    time_t tt = time(NULL);
+    time_t tt = time(NULL);  // ms
     printf("time: %ld\n", tt);
     // 1. time_t -> tm
+    gettimeofday(&tv, NULL);
+    printf("time: %ld\n", tv.tv_sec*1000 + tv.tv_usec*1000);  // ms
+
+    clock_gettime(CLOCK_REALTIME, &ts);
+    printf("clocktime: %ld\n", ts.tv_sec*1000 + ts.tv_nsec*1000000);  // ms
     // gmtime(&tt, &tms);  // no timezone
     localtime_r(&tt, &tms); // + timezone
     printf("UTC: %ld\n", (long)tt);
