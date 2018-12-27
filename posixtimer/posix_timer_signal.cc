@@ -36,14 +36,14 @@ void sigact(int signo, siginfo_t* siginfo, void* p) {
 int main() {
   // 1. create timer  
   timer_t trt;
-  struct sigevent sgt;
+  sigevent_t sgt;
   memset(&sgt, 0x00, sizeof(sgt));
   sgt.sigev_notify = SIGEV_SIGNAL;
   sgt.sigev_signo = SIGRTMIN+10;
   sgt.sigev_value.sival_int = 0x1234; // data pass
   sgt.sigev_notify_function = NULL;
   sgt.sigev_notify_attributes = NULL;
-  sgt.sigev_notify_thread_id = 0;
+  //sgt.sigev_notify_thread_id = 0;
   int retval = timer_create(CLOCK_MONOTONIC, &sgt, &trt);
   if (retval < 0) {
     perror("timer_create");
@@ -62,12 +62,14 @@ int main() {
       void (*sa_restorer)(void);
     };
   */
+  sigset_t sigset;
+  sigemptyset(&sigset);
   struct sigaction siga;
   struct sigaction sigao;
   memset(&siga, 0x00, sizeof(siga));
   memset(&sigao, 0x00, sizeof(sigao));
-  siga._sa_sigaction = sigact;
-  siga.sa_mask = 0;
+  siga.sa_sigaction = sigact;
+  siga.sa_mask = sigset;
   siga.sa_flags = SA_RESTART|SA_SIGINFO;
   retval = sigaction(SIGRTMIN+10, &siga, &sigao);
   if (retval < 0) {
