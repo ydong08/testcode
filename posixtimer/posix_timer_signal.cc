@@ -8,6 +8,16 @@
 #include <signal.h>
 #include <bits/siginfo.h>
 
+// struct timespec {
+//   time_t tv_sec;                /* Seconds */
+//   long   tv_nsec;               /* Nanoseconds */
+// };
+
+// struct itimerspec {
+//   struct timespec it_interval;  /* Timer interval */
+//   struct timespec it_value;     /* Initial expiration */
+// };
+
 // union sigval {          /* Data passed with notification */
 //     int     sival_int;         /* Integer value */
 //     void   *sival_ptr;         /* Pointer value */
@@ -48,7 +58,7 @@ int main() {
   int retval = timer_create(CLOCK_MONOTONIC, &sgt, &trt);
   if (retval < 0) {
     perror("timer_create");
-    return -1;
+    return retval;
   }
 
   // 2. register signal function
@@ -89,7 +99,7 @@ int main() {
   retval = timer_settime(trt, 0, &its, &oits);
   if (retval < 0) {
     perror("timer_settime");
-    return -1;
+    return retval;
   }
 
   printf("first settime: value: %ldus, interval: %ldus\n",
