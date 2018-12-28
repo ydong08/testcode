@@ -92,7 +92,7 @@ int main() {
   }
 
   printf("first settime: value: %ldus, interval: %ldus\n",
-        oits.it_value.tv_sec*1000000 + oits.it_value.tv_usec/1000,
+        oits.it_value.tv_sec*1000000 + oits.it_value.tv_nsec/1000,
         oits.it_interval.tv_sec*1000000 + oits.it_interval.tv_nsec/1000);
 
   retval = timer_gettime(trt, &nits);  
@@ -100,7 +100,7 @@ int main() {
     perror("timer_gettime");
   }
   printf("first gettime: value: %ldus, interval: %ldus\n",
-        nits.it_value.tv_sec*1000000 + nits.it_value.tv_usec/1000,
+        nits.it_value.tv_sec*1000000 + nits.it_value.tv_nsec/1000,
         nits.it_interval.tv_sec*1000000 + nits.it_interval.tv_nsec/1000);
 
   do {
@@ -118,7 +118,7 @@ int main() {
         break;
       }
       printf("second settime: value: %ldus, interval: %ldus\n",
-            oits.it_value.tv_sec*1000000 + oits.it_value.tv_usec/1000,
+            oits.it_value.tv_sec*1000000 + oits.it_value.tv_nsec/1000,
             oits.it_interval.tv_sec*1000000 + oits.it_interval.tv_nsec/1000);
 
       // 5. delete timer
