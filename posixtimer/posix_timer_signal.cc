@@ -114,6 +114,7 @@ int main() {
       its.it_value.tv_nsec = 0;
       retval = timer_settime(trt, 0, &its, &oits);
       if (retval < 0) {
+        printf("settime: %d\n", errno);
         perror("timer_settime stop timer");
         break;
       }
