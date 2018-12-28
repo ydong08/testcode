@@ -83,7 +83,7 @@ int main() {
   its.it_interval.tv_nsec = 1000000;
   its.it_value.tv_sec = 3;
   its.it_value.tv_nsec = 1000000;
-  retval = timer_settime(trt, TIMER_ABSTIME, &its, &oits);
+  retval = timer_settime(trt, 0, &its, &oits);
   if (retval < 0) {
     perror("timer_settime");
     return -1;
@@ -97,7 +97,7 @@ int main() {
       its.it_interval.tv_nsec = 0;
       its.it_value.tv_sec = 2;
       its.it_value.tv_nsec = 0;
-      retval = timer_settime(trt, TIMER_ABSTIME, &its, &oits);
+      retval = timer_settime(trt, 0, &its, &oits);
       if (retval < 0) {
         perror("timer_settime stop timer");
         break;
