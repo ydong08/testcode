@@ -77,11 +77,13 @@ int main() {
   }
 
   // 3. start timer
-  struct itimerspec its, oits;
+  struct itimerspec its, oits, nits;
   memset(&its, 0x00, sizeof(its));
-  its.it_interval.tv_sec = 5;
+  memset(&oits, 0x00, sizeof(oits));
+  memset(&nits, 0x00, sizeof(nits));
+  its.it_interval.tv_sec = 2;
   its.it_interval.tv_nsec = 1000000;
-  its.it_value.tv_sec = 3;
+  its.it_value.tv_sec = 5;
   its.it_value.tv_nsec = 1000000;
   retval = timer_settime(trt, 0, &its, &oits);
   if (retval < 0) {
@@ -89,19 +91,35 @@ int main() {
     return -1;
   }
 
+  printf("first settime: value: %ldus, interval: %ldus\n",
+        oits.it_value.tv_sec*1000000 + oits.it_value.tv_usec/1000,
+        oits.it_interval.tv_sec*1000000 + oits.it_interval.tv_nsec/1000);
+
+  retval = timer_gettime(trt, &nits);  
+  if (retval < 0) {
+    perror("timer_gettime");
+  }
+  printf("first gettime: value: %ldus, interval: %ldus\n",
+        nits.it_value.tv_sec*1000000 + nits.it_value.tv_usec/1000,
+        nits.it_interval.tv_sec*1000000 + nits.it_interval.tv_nsec/1000);
+
   do {
     if (sigsum < 0) {
       // 4. stop timer
       memset(&its, 0x00, sizeof(its));
+      memset(&oits, 0x00, sizeof(oits));
       its.it_interval.tv_sec = 0;
-      its.it_interval.tv_nsec = 0;
-      its.it_value.tv_sec = 2;
+      its.it_interval.tv_nsec = 2;
+      its.it_value.tv_sec = 0;
       its.it_value.tv_nsec = 0;
       retval = timer_settime(trt, 0, &its, &oits);
       if (retval < 0) {
         perror("timer_settime stop timer");
         break;
       }
+      printf("second settime: value: %ldus, interval: %ldus\n",
+            oits.it_value.tv_sec*1000000 + oits.it_value.tv_usec/1000,
+            oits.it_interval.tv_sec*1000000 + oits.it_interval.tv_nsec/1000);
 
       // 5. delete timer
       retval = timer_delete(trt);
