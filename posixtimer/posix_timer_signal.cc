@@ -119,15 +119,11 @@ int main() {
       // 4. stop timer
       memset(&its, 0x00, sizeof(its));
       memset(&oits, 0x00, sizeof(oits));
-      its.it_interval.tv_sec = 0;
-      its.it_interval.tv_nsec = 2;
-      its.it_value.tv_sec = 0;
-      its.it_value.tv_nsec = 0;
       retval = timer_settime(trt, 0, &its, &oits);
       if (retval < 0) {
         printf("settime: %d\n", errno);
         perror("timer_settime stop timer");
-        break;
+        //break;
       }
       printf("second settime: value: %ldus, interval: %ldus\n",
             oits.it_value.tv_sec*1000000 + oits.it_value.tv_nsec/1000,
