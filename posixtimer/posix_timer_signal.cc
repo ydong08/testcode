@@ -141,7 +141,7 @@ int main() {
     retval = timer_getoverrun(trt);
     if (0 < retval)
       printf("run over num: %d\n", retval);
-      
+
     if (sigsum < 0) {
       // 4. stop timer
       memset(&its, 0x00, sizeof(its));
@@ -164,6 +164,14 @@ int main() {
       break;
     }
   } while(1);
+
+
+  struct timespec ts;
+  ts.tv_sec = 26;
+  ts.tv_nsec = 1000000;
+   // once interrupted by signal, left time will store in second parameter
+  while(nanosleep(&ts, &ts)) { };
+  
 #endif
   return retval;
 
