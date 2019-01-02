@@ -114,6 +114,29 @@ int main() {
         nits.it_value.tv_sec*1000000 + nits.it_value.tv_nsec/1000,
         nits.it_interval.tv_sec*1000000 + nits.it_interval.tv_nsec/1000);
 
+#if 1 
+  struct timespec ts;
+  ts.tv_sec = 26;
+  ts.tv_nsec = 1000000;
+   // once interrupted by signal, left time will store in second parameter
+  while(nanosleep(&ts, &ts)) { };
+  
+  memset(&its, 0x00, sizeof(its));
+  memset(&oits, 0x00, sizeof(oits));
+  retval = timer_settime(trt, 0, &its, &oits);
+  if (retval < 0) {
+    printf("settime: %d\n", errno);
+    perror("timer_settime stop timer");
+  }
+  printf("timer_settime done\n");
+  retval = timer_delete(trt);
+  if (retval < 0) {
+    perror("timer_delete");
+  }
+  printf("timer_delete done\n");
+#endif
+
+#if 0
   do {
     if (sigsum < 0) {
       // 4. stop timer
@@ -137,7 +160,7 @@ int main() {
       }
     }
   } while(1);
-
+#endif
   return retval;
 
 }
