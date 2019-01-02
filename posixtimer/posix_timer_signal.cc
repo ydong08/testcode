@@ -138,6 +138,10 @@ int main() {
 
 #if 1
   do {
+    retval = timer_getoverrun(trt);
+    if (0 < retval)
+      printf("run over num: %d\n", retval);
+      
     if (sigsum < 0) {
       // 4. stop timer
       memset(&its, 0x00, sizeof(its));
