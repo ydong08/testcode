@@ -55,7 +55,7 @@ int main() {
   sgt.sigev_value.sival_int = 0x1234; // data pass
   sgt.sigev_notify_function = NULL;
   sgt.sigev_notify_attributes = NULL;
-  //sgt.sigev_notify_thread_id = 0;
+  sgt.sigev_notify_thread_id = 0;
   int retval = timer_create(CLOCK_MONOTONIC, &sgt, &trt);
   if (retval < 0) {
     perror("timer_create");
