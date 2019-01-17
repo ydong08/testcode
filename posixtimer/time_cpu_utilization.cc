@@ -11,6 +11,7 @@ int main() {
     ts.tv_usec = 1000;
     select(0, NULL,NULL, NULL, &ts);
   }
+  
   return 0;
 }
 
