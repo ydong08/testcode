@@ -1,4 +1,5 @@
 
+/* 在运行 top 命令时按下 “1” 键，可以看到每个 CPU 执行进程所占用的百分比。*/
 
 #include <stdio.h>
 #include <stdlib.h>

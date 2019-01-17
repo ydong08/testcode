@@ -1,9 +1,11 @@
 
 
+/* 在运行 top 命令时按下 “1” 键，可以看到每个 CPU 执行进程所占用的百分比。 */
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <limits.h>
 #include <sys/types.h>
 //#define _GNU_SOURCE
 #include <sched.h>
