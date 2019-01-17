@@ -57,6 +57,9 @@ int main() {
     }
     wast_time();
 
+    int procs_num = sysconf(_SC_NPROCESSORS_CONF);
+    printf("procs_num: %d\n", procs_num);
+
     return 0;
 
 }

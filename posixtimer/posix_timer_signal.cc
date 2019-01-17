@@ -1,4 +1,4 @@
-<<<<<<< Updated upstream
+
 
 #include <stdio.h>
 #include <stdlib.h>
