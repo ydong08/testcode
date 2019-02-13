@@ -69,6 +69,21 @@ void create_new_log_files(const char* pfile)
     }
 }
 
+int plain_test() {
+  const char* cmd = "zip -ur cc.zip *.cc";
+  FILE* fp = popen(cmd, "w");
+  if (!fp) {
+    perror("popen");
+    exit(1);
+  }
+  pclose(fp);
+
+  const char* cmd_ls = "ls -la *zip";
+  (void)popen(cmd_ls, "r");
+
+  return 0;
+}
+
 
 int main()
 {
