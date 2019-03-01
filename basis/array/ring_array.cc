@@ -31,7 +31,7 @@ int ringbuf_put(ringbuf_t* r, char data)
 {
     //当tail+1等于head时，说明队列已满
     if (r->fill_cnt >= r->length) {
-        printf("BUF FULL!\n");
+        printf("buf full!\n");
         return false;                  // 如果缓冲区满了，则返回错误
     }
 
@@ -47,7 +47,7 @@ int ringbuf_get(ringbuf_t* r, char *c, unsigned int length)
 {
     //当tail等于head时，说明队列空
     if (r->fill_cnt<=0) {
-        printf("BUF EMPTY!\n");
+        printf("buf empty!\n");
         return false;
     }
 
@@ -56,8 +56,7 @@ int ringbuf_get(ringbuf_t* r, char *c, unsigned int length)
         length = r->length;
     }
 
-    int i;
-    for (i = 0; i<length; i++)
+    for (int i = 0; i<length; i++)
     {
         r->fill_cnt--;
         *c = r->buf[r->head++];                 // 返回数据给*c
