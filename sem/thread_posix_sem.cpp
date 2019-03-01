@@ -18,6 +18,7 @@ void* writenum(void* p) {
   sem_wait((sem_t*)p);
   num += 10;
   printf("%ld thread write num: %d\n", syscall(SYS_gettid), num);
+  usleep(1000000);
   sem_post((sem_t*)p);
   pthread_exit(NULL);
 }
