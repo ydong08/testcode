@@ -16,7 +16,7 @@ void* writenum(void* p) {
   // pthread_detach(pthread_self());
   sem_wait((sem_t*)p);
   num += 10;
-  printf("%d thread write num: %d\n", syscall(SYS_gettid), num);
+  printf("%ld thread write num: %d\n", syscall(SYS_gettid), num);
   sem_post((sem_t*)p);
   pthread_exit(NULL);
 }
@@ -25,7 +25,7 @@ void* writenum(void* p) {
 void* readnum(void* p) {
   // pthread_detach(pthread_self());
   sem_wait((sem_t*)p);
-  printf("%d thread read  num: %d\n", syscall(SYS_gettid), num);
+  printf("%ld thread read  num: %d\n", syscall(SYS_gettid), num);
   sem_post((sem_t*)p);
   pthread_exit(NULL);
 }
@@ -35,7 +35,7 @@ int main() {
   int retval = 0;
   pthread_t wtid[THREAD_NUM] = {0};
   pthread_t rtid[THREAD_NUM] = {0};
-  sem_t* sm = sem_open(SEM_PATH_NAME, O_CREAT|O_EXCL, 0664, 1)
+  sem_t* sm = sem_open(SEM_PATH_NAME, O_CREAT|O_EXCL, 0664, 1);
   if (SEM_FAILED == sm) {
     printf("create sem fail: %d\n", errno);
     return 1;
