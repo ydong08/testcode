@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <sys/syscall.h>
 #include <semaphore.h>
+#include <errno.h>
 
 #define THREAD_NUM     100
 #define SEM_PATH_NAME  "mysem"
