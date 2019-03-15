@@ -129,7 +129,7 @@ void Servlet(SSL* ssl) /* Serve the connection -- threadable */
     if ( bytes > 0 )
     {
         buf[bytes] = 0;
-        printf("Client msg: "%s"n", buf);
+        printf("Client msg: %s\n", buf);
         sprintf(reply, HTMLecho, buf);   /* construct reply */
         SSL_write(ssl, reply, strlen(reply)); /* send reply */
     }
@@ -142,25 +142,25 @@ void Servlet(SSL* ssl) /* Serve the connection -- threadable */
 }
 
 
-int main(int count, char *strings[])
+int main(int argc, char **argv)
 {   
   SSL_CTX *ctx;
   int server;
   char *portnum;
-  if ( count != 2 )
+  if ( argc != 2 )
   {
-    printf("Usage: %s <portnum>n", strings[0]);
+    printf("Usage: %s <portnum>n", argv[0]);
     exit(0);
   }
   else
   {
-    printf("Usage: %s <portnum>n", strings[1]);
+    printf("Usage: %s <portnum>n", argv[1]);
   }
   
   SSL_library_init();
-  portnum = strings[1];
+  portnum = argv[1];
   ctx = InitServerCTX();        /* initialize SSL */
-  LoadCertificates(ctx, SSL_CERT_PATH, NULL);  /* load certs */
+  LoadCertificates(ctx, (char*)SSL_CERT_PATH, NULL);  /* load certs */
   server = OpenListener(atoi(portnum));    /* create server socket */
 
   SSL *ssl = NULL;
@@ -178,3 +178,6 @@ int main(int count, char *strings[])
   close(server);            /* close server socket */
   SSL_CTX_free(ctx);         /* release context */
 }
+
+
+
