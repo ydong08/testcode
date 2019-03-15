@@ -157,7 +157,7 @@ int main(int argc, char **argv)
   SSL_library_init();
   portnum = argv[1];
   ctx = InitServerCTX();        /* initialize SSL */
-  LoadCertificates(ctx, (char*)SSL_CERT_PATH, NULL);  /* load certs */
+  LoadCertificates(ctx, (char*)SSL_CERT_PATH, (char*)SSL_CERT_PATH);  /* load certs */
   server = OpenListener(atoi(portnum));    /* create server socket */
 
   SSL *ssl = NULL;
