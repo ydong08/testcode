@@ -1,6 +1,0 @@
-
-1. 
-VasPy 使用PyCharm打开，测试串口通信OK，未充分测试setConfig接口
-
-2. 
-VasCom 使用Netbean打开，测试串口通信OK
