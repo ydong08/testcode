@@ -15,9 +15,6 @@
 #define FAIL              -1
 #define SSL_CERT_PATH     "/home/winter/Repo/testcode/basis/openssl/sslsocket/server.pem"
 
-using namespace std;
-
-
 int OpenListener(int port)
 {   
   int sd;
@@ -166,12 +163,13 @@ int main(int argc, char **argv)
   SSL *ssl = NULL;
   struct sockaddr_in addr;
   socklen_t len = sizeof(addr);
+  int clientfd = 0;
   while (1)
   {   
-    int client = accept(server, (struct sockaddr*)&addr, &len);  /* accept connection   as usual */
+    clientfd = accept(server, (struct sockaddr*)&addr, &len);  /* accept connection   as usual */
     printf("Connection: %s:%dn",inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
     ssl = SSL_new(ctx);              /* get new SSL state with context */
-    SSL_set_fd(ssl, client);      /* set connection socket to SSL state */
+    SSL_set_fd(ssl, clientfd);      /* set connection socket to SSL state */
     Servlet(ssl);               /* service connection */
   }
 
