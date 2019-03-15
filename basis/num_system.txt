@@ -1,5 +1,5 @@
 
-/*不同进制数的求法*/
+/*涓嶅悓杩涘埗鏁扮殑姹傛硶*/
 void printb (unsigned int numb, int base) {
      Stack stack (100);
     do {

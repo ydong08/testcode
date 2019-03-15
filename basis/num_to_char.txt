@@ -1,4 +1,4 @@
-/*½«Ö¸¶¨ÕûÊı×ª»»Îª×Ö·û´®*/
+/*å°†æŒ‡å®šæ•´æ•°è½¬æ¢ä¸ºå­—ç¬¦ä¸²*/
 #include<stdio.h>
 #include<stdlib.h>
 void itoa(int num, char pval[]) {
