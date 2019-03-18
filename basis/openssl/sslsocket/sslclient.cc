@@ -40,16 +40,15 @@ int OpenConnection(const char *hostname, int port)
 
 SSL_CTX* InitCTX(void)
 {   
-  SSL_METHOD *method;
+  const SSL_METHOD *method;
   SSL_CTX *ctx;
   OpenSSL_add_all_algorithms();  /* Load cryptos, et.al. */
   SSL_load_error_strings();   /* Bring in and register error messages */
-  method = SSLv2_client_method();  /* Create new client-method instance */
+  method = TLSv1_client_method();  /* Create new client-method instance */
   ctx = SSL_CTX_new(method);   /* Create new context */
   if ( ctx == NULL )
   {
     ERR_print_errors_fp(stderr);
-    printf("Eroor: %s\n",stderr);
     abort();
   }
   return ctx;
@@ -83,27 +82,21 @@ int main(int count, char *strings[])
   SSL *ssl;
   char buf[1024];
   int bytes;
-  char *hostname, *portnum;
-  if ( count != 3 )
-  {
-    printf("usage: %s <hostname> <portnum>\n", strings[0]);
-    exit(0);
-  }
+  const char *hostname = NULL, *portnum=NULL;
   SSL_library_init();
-  hostname=strings[1];
-  portnum=strings[2];
+  hostname="192.168.31.113";
+  portnum="60011";
   ctx = InitCTX();
   server = OpenConnection(hostname, atoi(portnum));
   ssl = SSL_new(ctx);      /* create new SSL connection state */
   SSL_set_fd(ssl, server);    /* attach the socket descriptor */
   if ( SSL_connect(ssl) == FAIL )   /* perform the connection */
   {
-    printf("Eroor: %s\n",stderr);
     ERR_print_errors_fp(stderr);
   }
   else
   {   
-    char *msg = "HelloWorld";
+    const char *msg = "HelloWorld";
     printf("Connected with %s encryption\n", SSL_get_cipher(ssl));
     ShowCerts(ssl);        /* get any certs */
     SSL_write(ssl, msg, strlen(msg));   /* encrypt & send message */

@@ -31,7 +31,7 @@ int OpenListener(int port)
   }
   if ( listen(sd, 10) != 0 )
   {
-    perror("Can't configure listening port");
+    perror("can't configure listening port");
     abort();
   }
   return sd;
@@ -83,10 +83,10 @@ void LoadCertificates(SSL_CTX* ctx, char* CertFile, char* KeyFile)
   /* verify private key */
   if ( !SSL_CTX_check_private_key(ctx) )
   {
-    fprintf(stderr, "Private key does not match the public certificaten");
+    fprintf(stderr, "private key does not match the public certificaten");
     abort();
   }
-  printf("LoadCertificates Compleate Successfully.....n");
+  printf("load cert complete OK\n");
 }
 
 
@@ -97,17 +97,17 @@ void ShowCerts(SSL* ssl)
   cert = SSL_get_peer_certificate(ssl); /* Get certificates (if available) */
   if ( cert != NULL )
   {
-    printf("Server certificates:n");
+    printf("server certificates\n");
     line = X509_NAME_oneline(X509_get_subject_name(cert), 0, 0);
-    printf("Subject: %sn", line);
+    printf("subject: %s\n", line);
     free(line);
     line = X509_NAME_oneline(X509_get_issuer_name(cert), 0, 0);
-    printf("Issuer: %sn", line);
+    printf("issuer: %s\n", line);
     free(line);
     X509_free(cert);
   }
   else
-    printf("No certificates.n");
+    printf("no cert\n");
 }
 
 
@@ -126,7 +126,7 @@ void Servlet(SSL* ssl) /* Serve the connection -- threadable */
     if ( bytes > 0 )
     {
         buf[bytes] = 0;
-        printf("Client msg: %s\n", buf);
+        printf("client msg: %s\n", buf);
         sprintf(reply, HTMLecho, buf);   /* construct reply */
         SSL_write(ssl, reply, strlen(reply)); /* send reply */
     }
@@ -146,18 +146,16 @@ int main(int argc, char **argv)
   char *portnum;
   if ( argc != 2 )
   {
-    printf("Usage: %s <portnum>n", argv[0]);
+    printf("Usage: %s <portnum>\n", argv[0]);
     exit(0);
   }
-  else
-  {
-    printf("Usage: %s <portnum>n", argv[1]);
-  }
-  
   SSL_library_init();
+  printf("ssl init done\n"); 
   portnum = argv[1];
   ctx = InitServerCTX();        /* initialize SSL */
+  printf("init ctx done\n");
   LoadCertificates(ctx, (char*)SSL_CERT_PATH, (char*)SSL_CERT_PATH);  /* load certs */
+  printf("load cert done\n");
   server = OpenListener(atoi(portnum));    /* create server socket */
 
   SSL *ssl = NULL;
@@ -166,8 +164,9 @@ int main(int argc, char **argv)
   int clientfd = 0;
   while (1)
   {   
+    printf("enter accept\n");
     clientfd = accept(server, (struct sockaddr*)&addr, &len);  /* accept connection   as usual */
-    printf("Connection: %s:%dn",inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
+    printf("connection: %s:%dn",inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
     ssl = SSL_new(ctx);              /* get new SSL state with context */
     SSL_set_fd(ssl, clientfd);      /* set connection socket to SSL state */
     Servlet(ssl);               /* service connection */
