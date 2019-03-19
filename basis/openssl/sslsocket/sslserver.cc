@@ -26,7 +26,6 @@ int OpenListener(int port)
   addr.sin_addr.s_addr = INADDR_ANY;
   if (bind(sd, (struct sockaddr*)&addr, sizeof(addr)) != 0)
   {
-  	printf("\n");
     perror("can't bind port");
     abort();
   }
@@ -55,7 +54,6 @@ SSL_CTX* InitServerCTX(void)
   ctx = SSL_CTX_new(method);   /* create new context from method */
   if ( ctx == NULL )
   {
-  	printf("\n");
       ERR_print_errors_fp(stderr);
       abort();
   }
@@ -66,28 +64,21 @@ SSL_CTX* InitServerCTX(void)
 void LoadCertificates(SSL_CTX* ctx, char* CertFile, char* KeyFile)
 {
   if (SSL_CTX_load_verify_locations(ctx, CertFile, KeyFile) != 1)
-  {
-  	printf("\n");
       ERR_print_errors_fp(stderr);
   
-  }
-  if (SSL_CTX_set_default_verify_paths(ctx) != 1) {
-  	printf("\n");
+
+  if (SSL_CTX_set_default_verify_paths(ctx) != 1) 
       ERR_print_errors_fp(stderr);
-  
-  }
 
   /* set the local certificate from CertFile */
   if ( SSL_CTX_use_certificate_file(ctx, CertFile, SSL_FILETYPE_PEM) <= 0 )
   {
-  	printf("\n");
     ERR_print_errors_fp(stderr);
     abort();
   }
   /* set the private key from KeyFile (may be the same as CertFile) */
   if ( SSL_CTX_use_PrivateKey_file(ctx, KeyFile, SSL_FILETYPE_PEM) <= 0 )
   {
-  	printf("\n");
     ERR_print_errors_fp(stderr);
     abort();
   }
