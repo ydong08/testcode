@@ -264,7 +264,7 @@ int main(int count, char *strings[])
   SSL *ssl;
   char buf[1024];
   int bytes;
-  char *hostname = NULL, *portnum = NULL;
+  const char *hostname = NULL, *portnum = NULL;
 
 #ifdef CTOS_API  
   bytes = openwifi();
@@ -275,7 +275,7 @@ int main(int count, char *strings[])
       return -1;
   }
 #endif
-  
+
   SSL_library_init();
   hostname="192.168.31.113";
   portnum="60011";
@@ -293,7 +293,7 @@ int main(int count, char *strings[])
   }
   else
   {   
-    char *msg = "HelloWorld";
+    const char *msg = "HelloWorld";
     printf("Connected with %s encryption\n", SSL_get_cipher(ssl));
     ShowCerts(ssl);        /* get any certs */
     SSL_write(ssl, msg, strlen(msg));   /* encrypt & send message */
@@ -304,8 +304,9 @@ int main(int count, char *strings[])
   }
   close(server);         /* close socket */
   SSL_CTX_free(ctx);        /* release context */
-
+#ifdef CTOS_API
 Close:  
   closewifi();
+#endif  
   return 0;
 }
