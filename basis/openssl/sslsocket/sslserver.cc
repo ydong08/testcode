@@ -168,7 +168,8 @@ void ShowCerts(SSL* ssl)
 
 void Servlet(SSL* ssl) /* Serve the connection -- threadable */
 {   
-  int ret, tid = 0;
+  int ret = 0;
+  pthread_t tid = 0;
   // const char* HTMLecho="<html><body><pre>%s</pre></body></html>nn";
   if ( SSL_accept(ssl) == FAIL )     /* do SSL-protocol accept */
     ERR_print_errors_fp(stderr);
