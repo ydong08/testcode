@@ -1,5 +1,6 @@
 
 
+//#define CTOS_API
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -11,8 +12,12 @@
 #include <netdb.h>
 #include <openssl/ssl.h>
 #include <openssl/err.h>
+#ifdef CTOS_API
 #include <ctosapi.h>
+#endif
 
+
+#ifdef CTOS_API
 #define DISABLE_AUTOCONNAP                  (BYTE *)"0"
 #define ENABLE_AUTOCONNAP                   (BYTE *)"1"
 #define DISABLE_DHCP                        (BYTE *)"0"
@@ -158,7 +163,7 @@ int openwifi(void)
     
     return 0;
 }
-
+#endif
 
 int OpenConnection(const char *hostname, int port)
 {   
@@ -260,7 +265,8 @@ int main(int count, char *strings[])
   char buf[1024];
   int bytes;
   char *hostname = NULL, *portnum = NULL;
-  
+
+#ifdef CTOS_API  
   bytes = openwifi();
   if (0 < bytes) {
       printf("[log] open wifi error\n");
@@ -268,6 +274,7 @@ int main(int count, char *strings[])
         closewifi();
       return -1;
   }
+#endif
   
   SSL_library_init();
   hostname="192.168.31.113";
