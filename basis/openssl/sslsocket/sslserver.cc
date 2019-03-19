@@ -9,11 +9,63 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <resolv.h>
+#include <sys/syscall.h>
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 
 #define FAIL              -1
 #define SSL_CERT_PATH     "/home/winter/Repo/testcode/basis/openssl/sslsocket/server.pem"
+
+#define KERNEL_TID         syscall(SYS_gettid)
+
+char resbuf[8] = {0x02, 0x00, 0x05, 0x73, 0x65, 0x6E, 0x64, 0x21};
+void* DealData(void* p)
+{
+  pthread_detach(pthread_self());
+  if (!p)
+    pthread_exit(NULL);
+
+  SSL* ssl = (SSL*)p;
+  char databuf[1024] = {0};
+  int ret = -1;
+  int readerr = -1;
+  do
+  {
+    memset(databuf, 0, sizeof(databuf));
+    ret = SSL_read(ssl, databuf, sizeof(databuf));
+    if (0 < ret) {
+      printf("[%d] recv: %s\n", KERNEL_TID, databuf);
+      ret = SSL_write(ssl, resbuf, sizeof(resbuf));
+      if (0 < ret) {
+        printf("[%d] send ok\n", KERNEL_TID);
+      } else {
+        printf("[%d] send error: %d\n", KERNEL_TID, SSL_get_error(ssl, ret));
+      }
+
+    } else if (ret <= 0) {
+      readerr = SSL_get_error(ssl, ret);
+      if (SSL_ERROR_NONE == readerr)
+        continue;
+
+      if (SSL_ERROR_WANT_WRITE == readerr || SSL_ERROR_WANT_READ == readerr) {
+        printf("[%d] read again\n", KERNEL_TID);
+        usleep(100000);
+        continue;
+      }
+
+      printf("[%d] read error, exit\n", KERNEL_TID);
+      break;
+    } 
+  } while (1);
+  
+  int sockfd = SSL_get_fd(ssl); /* get socket connection */
+  SSL_free(ssl); /* release SSL state */
+  close(sockfd); /* close connection */
+         
+  pthread_exit(NULL);
+
+}
+
 
 int OpenListener(int port)
 {   
@@ -115,30 +167,18 @@ void ShowCerts(SSL* ssl)
 
 void Servlet(SSL* ssl) /* Serve the connection -- threadable */
 {   
-  char buf[1024];
-  char reply[1024];
-  int sd, bytes;
+  int ret, tid = 0;
   const char* HTMLecho="<html><body><pre>%s</pre></body></html>nn";
   if ( SSL_accept(ssl) == FAIL )     /* do SSL-protocol accept */
     ERR_print_errors_fp(stderr);
   else
   {
-	printf("connected with %s encryption\n", SSL_get_cipher(ssl));
+	  printf("connected with %s encryption\n", SSL_get_cipher(ssl));
     ShowCerts(ssl);        /* get any certificates */
-    bytes = SSL_read(ssl, buf, sizeof(buf)); /* get request */
-    if ( bytes > 0 )
-    {
-        buf[bytes] = 0;
-        printf("client msg: %s\n", buf);
-        sprintf(reply, HTMLecho, buf);   /* construct reply */
-        SSL_write(ssl, reply, strlen(reply)); /* send reply */
-    }
-    else
-        ERR_print_errors_fp(stderr);
+    ret = pthread_create(&tid, NULL, DealData, ssl);
+    if (ret != 0)
+      printf("create thread error\n");  
   }
-  sd = SSL_get_fd(ssl);       /* get socket connection */
-  SSL_free(ssl);         /* release SSL state */
-  close(sd);          /* close connection */
 }
 
 
