@@ -54,7 +54,7 @@ void* DealData(void* p)
         continue;
       }
 
-      printf("[%ld] read error, exit\n", KERNEL_TID);
+      printf("[%ld] read error %d, exit\n", KERNEL_TID, readerr);
       break;
     } 
   } while (1);
