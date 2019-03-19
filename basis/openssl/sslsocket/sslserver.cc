@@ -12,6 +12,7 @@
 #include <sys/syscall.h>
 #include <openssl/ssl.h>
 #include <openssl/err.h>
+#include <pthread.h>
 
 #define FAIL              -1
 #define SSL_CERT_PATH     "/home/winter/Repo/testcode/basis/openssl/sslsocket/server.pem"
@@ -34,12 +35,12 @@ void* DealData(void* p)
     memset(databuf, 0, sizeof(databuf));
     ret = SSL_read(ssl, databuf, sizeof(databuf));
     if (0 < ret) {
-      printf("[%d] recv: %s\n", KERNEL_TID, databuf);
+      printf("[%ld] recv: %s\n", KERNEL_TID, databuf);
       ret = SSL_write(ssl, resbuf, sizeof(resbuf));
       if (0 < ret) {
-        printf("[%d] send ok\n", KERNEL_TID);
+        printf("[%ld] send ok\n", KERNEL_TID);
       } else {
-        printf("[%d] send error: %d\n", KERNEL_TID, SSL_get_error(ssl, ret));
+        printf("[%ld] send error: %d\n", KERNEL_TID, SSL_get_error(ssl, ret));
       }
 
     } else if (ret <= 0) {
@@ -48,12 +49,12 @@ void* DealData(void* p)
         continue;
 
       if (SSL_ERROR_WANT_WRITE == readerr || SSL_ERROR_WANT_READ == readerr) {
-        printf("[%d] read again\n", KERNEL_TID);
+        printf("[%ld] read again\n", KERNEL_TID);
         usleep(100000);
         continue;
       }
 
-      printf("[%d] read error, exit\n", KERNEL_TID);
+      printf("[%ld] read error, exit\n", KERNEL_TID);
       break;
     } 
   } while (1);
@@ -168,7 +169,7 @@ void ShowCerts(SSL* ssl)
 void Servlet(SSL* ssl) /* Serve the connection -- threadable */
 {   
   int ret, tid = 0;
-  const char* HTMLecho="<html><body><pre>%s</pre></body></html>nn";
+  // const char* HTMLecho="<html><body><pre>%s</pre></body></html>nn";
   if ( SSL_accept(ssl) == FAIL )     /* do SSL-protocol accept */
     ERR_print_errors_fp(stderr);
   else
