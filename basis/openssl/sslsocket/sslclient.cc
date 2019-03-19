@@ -281,10 +281,11 @@ int main(int count, char *strings[])
   portnum="60011";
   ctx = InitCTX();
   server = OpenConnection(hostname, atoi(portnum));
+#ifdef CTOS_API  
   if (server < 0) {
       goto Close;
   }
-  
+#endif  
   ssl = SSL_new(ctx);      /* create new SSL connection state */
   SSL_set_fd(ssl, server);    /* attach the socket descriptor */
   if ( SSL_connect(ssl) == -1 )   /* perform the connection */
