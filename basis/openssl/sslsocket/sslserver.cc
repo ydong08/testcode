@@ -123,6 +123,7 @@ void Servlet(SSL* ssl) /* Serve the connection -- threadable */
     ERR_print_errors_fp(stderr);
   else
   {
+	printf("connected with %s encryption\n", SSL_get_cipher(ssl));
     ShowCerts(ssl);        /* get any certificates */
     bytes = SSL_read(ssl, buf, sizeof(buf)); /* get request */
     if ( bytes > 0 )
