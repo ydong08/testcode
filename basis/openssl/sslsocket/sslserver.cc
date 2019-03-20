@@ -40,10 +40,12 @@ void* DealData(void* p)
       if (0 < ret) {
         printf("[%ld] send ok\n", KERNEL_TID);
       } else {
+        ERR_print_errors_fp(stderr);
         printf("[%ld] send error: %d\n", KERNEL_TID, SSL_get_error(ssl, ret));
       }
 
     } else if (ret <= 0) {
+      ERR_print_errors_fp(stderr);
       readerr = SSL_get_error(ssl, ret);
       if (SSL_ERROR_NONE == readerr)
         continue;
