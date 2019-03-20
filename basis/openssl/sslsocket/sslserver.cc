@@ -14,7 +14,6 @@
 #include <openssl/err.h>
 #include <pthread.h>
 
-#define FAIL              -1
 #define SSL_CERT_PATH     "/home/winter/Repo/testcode/basis/openssl/sslsocket/server.pem"
 
 #define KERNEL_TID         syscall(SYS_gettid)
@@ -43,12 +42,11 @@ void* DealData(void* p)
         ERR_print_errors_fp(stderr);
         printf("[%ld] send error: %d\n", KERNEL_TID, SSL_get_error(ssl, ret));
       }
-
     } else if (ret <= 0) {
       ERR_print_errors_fp(stderr);
       readerr = SSL_get_error(ssl, ret);
       if (SSL_ERROR_NONE == readerr)
-        continue;
+        break;
 
       if (SSL_ERROR_WANT_WRITE == readerr || SSL_ERROR_WANT_READ == readerr) {
         printf("[%ld] read again\n", KERNEL_TID);
@@ -173,7 +171,7 @@ void Servlet(SSL* ssl) /* Serve the connection -- threadable */
   int ret = 0;
   pthread_t tid = 0;
   // const char* HTMLecho="<html><body><pre>%s</pre></body></html>nn";
-  if ( SSL_accept(ssl) == FAIL )     /* do SSL-protocol accept */
+  if ( SSL_accept(ssl) <= 0 )     /* do SSL-protocol accept */
     ERR_print_errors_fp(stderr);
   else
   {
