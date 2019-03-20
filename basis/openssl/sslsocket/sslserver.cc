@@ -210,11 +210,11 @@ int main(int argc, char **argv)
   while (1)
   {   
     printf("enter accept\n");
-    clientfd = accept(server, (struct sockaddr*)&addr, &len);  /* accept connection   as usual */
+    clientfd = accept(server, (struct sockaddr*)&addr, &len);  /* accept connection as usual */
     printf("connection: %s:%d\n",inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
     ssl = SSL_new(ctx);              /* get new SSL state with context */
-    SSL_set_fd(ssl, clientfd);      /* set connection socket to SSL state */
-    Servlet(ssl);               /* service connection */
+    SSL_set_fd(ssl, clientfd);       /* set connection socket to SSL state */
+    Servlet(ssl);                    /* service connection */
   }
 
   close(server);            /* close server socket */
