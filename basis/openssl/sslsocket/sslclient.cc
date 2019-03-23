@@ -315,6 +315,8 @@ int main(int count, char *strings[])
       }
     }
   
+
+    printf("connected with %s encryption\n", SSL_get_cipher(ssl));
     printf("connected with %s encryption\n", SSL_get_cipher(ssl));
     ShowCerts(ssl);        /* get any certs */
     SSL_write(ssl, msg, strlen(msg));   /* encrypt & send message */
