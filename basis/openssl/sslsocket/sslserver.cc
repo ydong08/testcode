@@ -45,17 +45,23 @@ void* DealData(void* p)
     } else if (ret <= 0) {
       ERR_print_errors_fp(stderr);
       readerr = SSL_get_error(ssl, ret);
-      if (SSL_ERROR_NONE == readerr)
-        break;
-
-      if (SSL_ERROR_WANT_WRITE == readerr || SSL_ERROR_WANT_READ == readerr) {
-        printf("[%ld] read again\n", KERNEL_TID);
-        usleep(100000);
-        continue;
+      switch(readerr)
+      {
+	case SSL_ERROR_NONE:
+          break;
+	case SSL_ERROR_WANT_READ:
+	case SSL_ERROR_WANT_WRITE:
+          printf("[%ld] read again\n", KERNEL_TID);
+          usleep(100000);
+          continue;
+	
+	case SSL_ERROR_ZERO_RETURN:
+      	  printf("peer closed\n");
+          break;
+	default:
+      	  printf("[%ld] read error %d, exit\n", KERNEL_TID, readerr);
+          break;
       }
-
-      printf("[%ld] read error %d, exit\n", KERNEL_TID, readerr);
-      break;
     } 
   } while (1);
   

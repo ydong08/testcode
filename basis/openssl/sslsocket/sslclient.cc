@@ -198,21 +198,21 @@ int OpenConnection(const char *hostname, int port)
   FD_SET(sd, &wset);
   int ret = select(sd+1, &rset, &wset, NULL, &tmv);
   if (ret < 0) {
-      printf("[log] select error: %d\n", errno);
-      return -1;
+    printf("[log] select error: %d\n", errno);
+    return -1;
   }
   
   int error = 0;
   int len = sizeof(error);
   ret = getsockopt(sd, SOL_SOCKET, SO_ERROR, &error, (socklen_t*)&len);
   if (ret < 0) {
-      printf("[log] getsockopt error: %d\n", errno);
-      return -1;
+    printf("[log] getsockopt error: %d\n", errno);
+    return -1;
   }
   
   if (FD_ISSET(sd, &rset) || FD_ISSET(sd, &wset))
   {
-      printf("[log] connect ok\n");
+    printf("[log] connect ok\n");
     return sd;
   }
   
@@ -243,17 +243,17 @@ void ShowCerts(SSL* ssl)
   cert = SSL_get_peer_certificate(ssl); /* get the server's certificate */
   if ( cert != NULL )
   {
-    printf("Server certificates\n");
+    printf("[log] server certificates\n");
     line = X509_NAME_oneline(X509_get_subject_name(cert), 0, 0);
-    printf("Subject: %s\n", line);
+    printf("[log] subject: %s\n", line);
     free(line);       /* free the malloc'ed string */
     line = X509_NAME_oneline(X509_get_issuer_name(cert), 0, 0);
-    printf("Issuer: %s\n", line);
+    printf("[log] issuer: %s\n", line);
     free(line);       /* free the malloc'ed string */
     X509_free(cert);     /* free the malloc'ed certificate copy */
   }
   else
-   printf("No certificates\n");
+   printf("[log] no certificates\n");
 }
 
 
@@ -286,23 +286,44 @@ int main(int count, char *strings[])
       goto Close;
   }
 #endif  
+  int conn_err = 0;
+  int conn_flag = 0;
+  int err_error = 0;
+  const char *msg = "HelloWorld";
   ssl = SSL_new(ctx);      /* create new SSL connection state */
   SSL_set_fd(ssl, server);    /* attach the socket descriptor */
-  if ( SSL_connect(ssl) == -1 )   /* perform the connection */
+
+  do
   {
-    ERR_print_errors_fp(stderr);
-  }
-  else
-  {   
-    const char *msg = "HelloWorld";
-    printf("Connected with %s encryption\n", SSL_get_cipher(ssl));
+    if (!conn_flag) {
+      conn_err = SSL_conect(ssl);
+      if (1 == conn_err) {
+	conn_flag = 1;
+        printf("[log] ssl connect ok\n");
+      } else if (conn_err <= 0) {
+        ERR_print_errors_fp(stderr);
+	err_error = SSL_get_errors(ssl, conn_err);
+	if (SSL_ERROR_WANT_READ == err_error || SSL_ERROR_WANT_WRITE == err_error)
+	  continue;
+	else if (SSL_ERROR_NONE == err_error) {
+	  conn_flag = 1;
+	  // do nothing
+	} else {
+	  printf("[log] ssl connect error\n");
+	  break;
+	}
+      }
+    }
+  
+    printf("connected with %s encryption\n", SSL_get_cipher(ssl));
     ShowCerts(ssl);        /* get any certs */
     SSL_write(ssl, msg, strlen(msg));   /* encrypt & send message */
     bytes = SSL_read(ssl, buf, sizeof(buf)); /* get reply & decrypt */
     buf[bytes] = 0;
-    printf("Received: %s\n", buf);
-    SSL_free(ssl);        /* release connection state */
+    printf("received: %s\n", buf);
   }
+
+  SSL_free(ssl);        /* release connection state */
   close(server);         /* close socket */
   SSL_CTX_free(ctx);        /* release context */
 #ifdef CTOS_API
