@@ -277,7 +277,8 @@ int main(int count, char *strings[])
 #endif
 
   SSL_library_init();
-  hostname="192.168.31.113";
+  //hostname="192.168.31.113";
+  hostname="192.168.0.108";
   portnum="60011";
   ctx = InitCTX();
   server = OpenConnection(hostname, atoi(portnum));
@@ -296,13 +297,13 @@ int main(int count, char *strings[])
   do
   {
     if (!conn_flag) {
-      conn_err = SSL_conect(ssl);
+      conn_err = SSL_connect(ssl);
       if (1 == conn_err) {
 	conn_flag = 1;
         printf("[log] ssl connect ok\n");
       } else if (conn_err <= 0) {
         ERR_print_errors_fp(stderr);
-	err_error = SSL_get_errors(ssl, conn_err);
+	err_error = SSL_get_error(ssl, conn_err);
 	if (SSL_ERROR_WANT_READ == err_error || SSL_ERROR_WANT_WRITE == err_error)
 	  continue;
 	else if (SSL_ERROR_NONE == err_error) {
@@ -315,15 +316,14 @@ int main(int count, char *strings[])
       }
     }
   
-
-    printf("connected with %s encryption\n", SSL_get_cipher(ssl));
     printf("connected with %s encryption\n", SSL_get_cipher(ssl));
     ShowCerts(ssl);        /* get any certs */
     SSL_write(ssl, msg, strlen(msg));   /* encrypt & send message */
     bytes = SSL_read(ssl, buf, sizeof(buf)); /* get reply & decrypt */
     buf[bytes] = 0;
-    printf("received: %s\n", buf);
-  }
+    printf("received: %s\n\n", buf);
+    usleep(2000000);
+  } while(1);
 
   SSL_free(ssl);        /* release connection state */
   close(server);         /* close socket */

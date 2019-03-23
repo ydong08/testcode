@@ -14,11 +14,11 @@
 #include <openssl/err.h>
 #include <pthread.h>
 
-#define SSL_CERT_PATH     "/home/winter/Repo/testcode/basis/openssl/sslsocket/server.pem"
+#define SSL_CERT_PATH     "server.pem"
 
 #define KERNEL_TID         syscall(SYS_gettid)
 
-char resbuf[8] = {0x02, 0x00, 0x05, 0x73, 0x65, 0x6E, 0x64, 0x21};
+char resbuf[8] = {0x73, 0x65, 0x6E, 0x64, 0x21, 0x00, 0x00, 0x00};
 void* DealData(void* p)
 {
   pthread_detach(pthread_self());
@@ -37,7 +37,7 @@ void* DealData(void* p)
       printf("[%ld] recv: %s\n", KERNEL_TID, databuf);
       ret = SSL_write(ssl, resbuf, sizeof(resbuf));
       if (0 < ret) {
-        printf("[%ld] send ok\n", KERNEL_TID);
+        printf("[%ld] send ok\n\n", KERNEL_TID);
       } else {
         ERR_print_errors_fp(stderr);
         printf("[%ld] send error: %d\n", KERNEL_TID, SSL_get_error(ssl, ret));
@@ -122,7 +122,27 @@ SSL_CTX* InitServerCTX(void)
 
 void LoadCertificates(SSL_CTX* ctx, char* CertFile, char* KeyFile)
 {
-  if (SSL_CTX_load_verify_locations(ctx, CertFile, KeyFile) != 1)
+  /*get pem file path */
+  char path[256] = {0};
+  ssize_t  len = readlink("/proc/self/exe", path, sizeof(path));
+  if (len < 0) {
+    perror("readlink");
+    abort();
+  }
+  if (sizeof(path) < strlen(path) + strlen(CertFile) - strlen("readlink")) {
+    printf("insufficent buf\n");
+    abort();
+  }
+  char* pos = strrchr(path, '/');
+  memset(pos+1, 0, (char*)path + sizeof(path)-pos-1);
+  memcpy(pos+1, CertFile, strlen(CertFile)+1);
+  printf("[log] ca path:%s\n", path);
+  if (access(path, F_OK) < 0) {
+    printf("[log] ca file not found\n");
+    abort();
+  }
+
+  if (SSL_CTX_load_verify_locations(ctx, path, NULL) != 1)
       ERR_print_errors_fp(stderr);
   
 
@@ -130,13 +150,13 @@ void LoadCertificates(SSL_CTX* ctx, char* CertFile, char* KeyFile)
       ERR_print_errors_fp(stderr);
 
   /* set the local certificate from CertFile */
-  if ( SSL_CTX_use_certificate_file(ctx, CertFile, SSL_FILETYPE_PEM) <= 0 )
+  if ( SSL_CTX_use_certificate_file(ctx, path, SSL_FILETYPE_PEM) <= 0 )
   {
     ERR_print_errors_fp(stderr);
     abort();
   }
   /* set the private key from KeyFile (may be the same as CertFile) */
-  if ( SSL_CTX_use_PrivateKey_file(ctx, KeyFile, SSL_FILETYPE_PEM) <= 0 )
+  if ( SSL_CTX_use_PrivateKey_file(ctx, path, SSL_FILETYPE_PEM) <= 0 )
   {
     ERR_print_errors_fp(stderr);
     abort();
@@ -147,7 +167,7 @@ void LoadCertificates(SSL_CTX* ctx, char* CertFile, char* KeyFile)
     fprintf(stderr, "private key does not match the public certificaten");
     abort();
   }
-  printf("load cert complete OK\n");
+  printf("[log] load cert complete ok\n");
 }
 
 
@@ -158,17 +178,17 @@ void ShowCerts(SSL* ssl)
   cert = SSL_get_peer_certificate(ssl); /* Get certificates (if available) */
   if ( cert != NULL )
   {
-    printf("server certificates\n");
+    printf("[log] server certificates\n");
     line = X509_NAME_oneline(X509_get_subject_name(cert), 0, 0);
-    printf("subject: %s\n", line);
+    printf("[log] subject: %s\n", line);
     free(line);
     line = X509_NAME_oneline(X509_get_issuer_name(cert), 0, 0);
-    printf("issuer: %s\n", line);
+    printf("[log] issuer: %s\n", line);
     free(line);
     X509_free(cert);
   }
   else
-    printf("no cert\n");
+    printf("[log] no cert\n");
 }
 
 
@@ -180,12 +200,12 @@ void Servlet(SSL* ssl) /* Serve the connection -- threadable */
   if ( SSL_accept(ssl) <= 0 )     /* do SSL-protocol accept */
     ERR_print_errors_fp(stderr);
   else
-  {
-	  printf("connected with %s encryption\n", SSL_get_cipher(ssl));
+  { 
+    printf("[log] connected with %s encryption\n", SSL_get_cipher(ssl));
     ShowCerts(ssl);        /* get any certificates */
     ret = pthread_create(&tid, NULL, DealData, ssl);
     if (ret != 0)
-      printf("create thread error\n");  
+      printf("[log] create thread error\n");  
   }
 }
 
@@ -201,12 +221,12 @@ int main(int argc, char **argv)
     exit(0);
   }
   SSL_library_init();
-  printf("ssl init done\n"); 
+  printf("[log] ssl init done\n"); 
   portnum = argv[1];
   ctx = InitServerCTX();        /* initialize SSL */
-  printf("init ctx done\n");
+  printf("[log] init ctx done\n");
   LoadCertificates(ctx, (char*)SSL_CERT_PATH, (char*)SSL_CERT_PATH);  /* load certs */
-  printf("load cert done\n");
+  printf("[log] load cert done\n");
   server = OpenListener(atoi(portnum));    /* create server socket */
 
   SSL *ssl = NULL;
@@ -215,9 +235,9 @@ int main(int argc, char **argv)
   int clientfd = 0;
   while (1)
   {   
-    printf("enter accept\n");
+    printf("[log] enter accept\n");
     clientfd = accept(server, (struct sockaddr*)&addr, &len);  /* accept connection as usual */
-    printf("connection: %s:%d\n",inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
+    printf("[log] connection: %s:%d\n",inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
     ssl = SSL_new(ctx);              /* get new SSL state with context */
     SSL_set_fd(ssl, clientfd);       /* set connection socket to SSL state */
     Servlet(ssl);                    /* service connection */
