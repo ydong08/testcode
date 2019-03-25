@@ -32,7 +32,9 @@ void* DealData(void* p)
   do
   {
     memset(databuf, 0, sizeof(databuf));
+	printf("ssl read in \n");
     ret = SSL_read(ssl, databuf, sizeof(databuf));
+	printf("ssl read out \n");
     if (0 < ret) {
       printf("[%ld] recv: %s\n", KERNEL_TID, databuf);
       ret = SSL_write(ssl, resbuf, sizeof(resbuf));
