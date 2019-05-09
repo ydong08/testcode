@@ -11,6 +11,7 @@
 #include<sys/resource.h>
 #include<sys/stat.h>
 #include<signal.h>
+#include<fcntl.h>
 
 #define BUFLEN 20
 
@@ -41,6 +42,13 @@ void daemon(){
 		rl.rlim_max = 1024;
 	for(int i = 0; i < rl.rlim_max; ++i)
 		close(i);
+
+	int fd = open("/dev/null", O_RDWR);
+	if (0 < fd) {
+		dup2(fd, 0);
+		dup2(fd, 1);
+		dup2(fd, 2);
+	}
 
 	chdir("/");
 
