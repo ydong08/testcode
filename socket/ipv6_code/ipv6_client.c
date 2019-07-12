@@ -15,14 +15,14 @@
 #include <pthread.h>
 
 
-#define EBABLE_IPV6
-#define ENABLE_IPV4
-#define ENABLE_AUTO
+#define ENABLE_IPV6
+//#define ENABLE_IPV4
+//#define ENABLE_AUTO
 
 #if defined(ENABLE_IPV4)
 const char* addr = "18.118.133.17";
 #elif defined(ENABLE_IPV6)
-const char* addr = "fe80::4bf:5fff:fead:3d70";
+const char* addr = "fe80::20c:29ff:fe32:b303%ens33";
 #elif defined(ENABLE_AUTO)
 const char* addr = NULL;
 #endif 
@@ -84,7 +84,6 @@ int main(int argc, char** argv) {
   /* getaddrinfo */
   struct addrinfo hint;
   struct addrinfo *res = NULL;
-  struct addrinfo *pit;
   memset(&hint, 0, sizeof(hint));
   hint.ai_family = AF_UNSPEC;
   hint.ai_socktype = SOCK_STREAM;

@@ -18,20 +18,21 @@
 
 
 
-#define EBABLE_IPV6
-#define ENABLE_IPV4
-#define ENABLE_AUTO
+#define ENABLE_IPV6
+//#define ENABLE_IPV4
+//#define ENABLE_AUTO
 
 #if defined(ENABLE_IPV4)
-const char* addr = "18.118.133.17";
+const char* addr = "192.168.200.128";
 #elif defined(ENABLE_IPV6)
-const char* addr = "fe80::4bf:5fff:fead:3d70";
+const char* addr = "fe80::20c:29ff:fe32:b303%ens33";
 #elif defined(ENABLE_AUTO)
 const char* addr = NULL;
 #endif 
 
 #define WIFIDOG_PORT  "2060"
 #define READ_BUF_MAX_LEN 128
+
 
 
 void* server_thread(void* arg) {
@@ -77,9 +78,9 @@ int main(int argc, char** argv) {
                         ret == AF_INET ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6),
                         host, NI_MAXHOST,
                         NULL, 0, NI_NUMERICHOST); // NI_NUMERICHOST
-      if (!ret) {
+      if (!ret) 
         printf("\t[%s]\n", host);
-      }
+      
     }
   }
   
@@ -91,29 +92,53 @@ int main(int argc, char** argv) {
   hint.ai_family = AF_UNSPEC;
   hint.ai_socktype = SOCK_STREAM;
   hint.ai_flags = AI_PASSIVE|AI_ADDRCONFIG;
+  char saddr[INET6_ADDRSTRLEN] = {0};
   ret = getaddrinfo(addr, WIFIDOG_PORT, &hint, &res); 
   if (ret < 0 || res == NULL) {
     printf("getaddrinfo error: %s\n", gai_strerror(ret));
     exit(EXIT_FAILURE);
   } 
   
+  for (pit = res; pit != NULL; pit = pit->ai_next) {
+    printf("family[%d], address len[%d]\n", pit->ai_family, pit->ai_addrlen);
+  }
+  
+  if (!res) {
+    printf("addrinfo null\n");
+    goto GEXIT;
+  }
+  
   /* create socket */
   int fd = socket(res->ai_family, SOCK_STREAM|SOCK_NONBLOCK|SOCK_CLOEXEC, 0);
   if (fd < 0) {
     printf("socket fail[%s]\n", strerror(errno));
+    //continue;
     goto GEXIT;
   }
   
+  const char* dst = NULL;
+  if (res->ai_family == AF_INET) {
+    dst = inet_ntop(res->ai_family, &((struct sockaddr_in*)(res->ai_addr))->sin_addr, saddr, INET6_ADDRSTRLEN);
+  } else if (res->ai_family == AF_INET6) { 
+    dst = inet_ntop(res->ai_family, &((struct sockaddr_in6*)(res->ai_addr))->sin6_addr, saddr, INET6_ADDRSTRLEN);
+  }
+  
+  if (!dst)
+    printf("inet_ntop fail[%s]\n", strerror(errno));
+  else
+    printf("family[%d], bind address[%s]\n", res->ai_family, saddr);
+  
   ret = bind(fd, res->ai_addr, (socklen_t)res->ai_addrlen);
   if (ret < 0) {
-    printf("bind fail[%s]\n", strerror(errno));
+    printf("bind fail[%d:%s]\n", errno, strerror(errno));
     close(fd);
+    //continue;
     goto GEXIT;
   }
   
   ret = listen(fd, 10);
   if (ret < 0) {
-    printf("bind fail[%s]\n", strerror(errno));
+    printf("listen fail[%s]\n", strerror(errno));
     close(fd);
     goto GEXIT;
   }
@@ -121,34 +146,39 @@ int main(int argc, char** argv) {
   int error = 0;
   pthread_t tid;
   unsigned short proto = 0;
-  char saddr4[INET_ADDRSTRLEN] = {0};
+  
   struct sockaddr_in* addr4 = NULL;
-  char saddr6[INET6_ADDRSTRLEN] = {0};
   struct sockaddr_in6* addr6 = NULL;
+  
   struct sockaddr_storage ss;
   memset(&ss, 0, sizeof(ss));
   socklen_t socklen = sizeof(ss);
+  
   while(1) {
     int cfd = accept4(fd, (struct sockaddr*)&ss, &socklen, 0);
     if (cfd < 0) {
       error = errno;
-      printf("accept fail[%d]\n", error);
-      if (error == EAGAIN)
+      if (error == EAGAIN) {
+        sleep(1);
         continue;
-      else
+      } else {
+        printf("accept fail[%d]\n", error);
         break;
+      }
+        
     }
     
     proto = *(unsigned short*)&ss;
     printf("new connect type[%hd]\n", proto);
+    memset(saddr, 0, sizeof(saddr));
     if (proto == AF_INET || proto == PF_INET ) {
       addr4 = (struct sockaddr_in*)&ss;
-      inet_ntop(AF_INET, &(addr4->sin_addr), saddr4, INET_ADDRSTRLEN);
-      printf("proto[%d] addr[%s]\n", addr4->sin_family, saddr4);
+      inet_ntop(AF_INET, &(addr4->sin_addr), saddr, INET6_ADDRSTRLEN);
+      printf("proto[%d] addr[%s]\n", addr4->sin_family, saddr);
     } else if (proto == AF_INET6 || proto == PF_INET6) {
       addr6 = (struct sockaddr_in6*)&ss;
-      inet_ntop(AF_INET, &(addr6->sin6_addr), saddr6, INET6_ADDRSTRLEN);
-      printf("proto[%d] addr[%s]\n", addr6->sin6_family, saddr6);
+      inet_ntop(AF_INET, &(addr6->sin6_addr), saddr, INET6_ADDRSTRLEN);
+      printf("proto[%d] addr[%s]\n", addr6->sin6_family, saddr);
     }
     
     ret = pthread_create(&tid, NULL, server_thread, &cfd);
