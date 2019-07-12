@@ -13,14 +13,15 @@
 #include <string.h>
 #include <errno.h>
 #include <pthread.h>
+#include <arpa/inet.h>
 
 
-#define ENABLE_IPV6
-//#define ENABLE_IPV4
+//#define ENABLE_IPV6
+#define ENABLE_IPV4
 //#define ENABLE_AUTO
 
 #if defined(ENABLE_IPV4)
-const char* addr = "18.118.133.17";
+const char* addr = "192.168.200.128";
 #elif defined(ENABLE_IPV6)
 const char* addr = "fe80::20c:29ff:fe32:b303%ens33";
 #elif defined(ENABLE_AUTO)
@@ -38,8 +39,8 @@ void* client_thread(void* arg) {
   int writebyte = 0;
   char buf[WRITE_BUF_MAX_LEN] = {0};
   while(1) {
-    memcpy(buf, WRITE_CONTENT, strlen(buf));
-    writebyte = write(fd, buf, sizeof(buf));
+    memcpy(buf, WRITE_CONTENT, strlen(WRITE_CONTENT));
+    writebyte = send(fd, buf, strlen(buf), 0);
     if (writebyte < 0 && (errno != EAGAIN || errno != EWOULDBLOCK))
       break;
     printf("write len[%d]\n", writebyte);
@@ -81,6 +82,7 @@ int main(int argc, char** argv) {
     }
   }
   
+ 
   /* getaddrinfo */
   struct addrinfo hint;
   struct addrinfo *res = NULL;
@@ -93,21 +95,56 @@ int main(int argc, char** argv) {
     printf("getaddrinfo error: %s\n", gai_strerror(ret));
     exit(EXIT_FAILURE);
   } 
+
+
+#if 0 
+  struct sockaddr *sa = NULL;
+  unsigned short family = 0;
+  socklen_t len = 0;
+#if defined(ENABLE_IPV6)  
+  struct sockaddr_in6 si6;
+  memset(&si6, 0, sizeof(si6)); 
+  family = AF_INET6; 
+  si6.sin6_family = AF_INET6;
+  si6.sin6_port = htons(WIFIDOG_PORT);
+  inet_pton(AF_INET6, addr, &si6.sin6_addr);
+  sa = (struct sockaddr*)&si6;
+  len = sizeof(si6);
+#endif
+
+#if defined(ENABLE_IPV4)
+  struct sockaddr_in si;
+  memset(&si, 0, sizeof(si));
+  family = AF_INET6;
+  si.sin_family = AF_INET;
+  si.sin_port = htons(WIFIDOG_PORT);
+  inet_pton(AF_INET, addr, &si.sin_addr);
+  sa = (struct sockaddr*)&si;
+  len = sizeof(si);
+#endif
+#endif
   
   /* create socket */
   int fd = socket(res->ai_family, SOCK_STREAM|SOCK_NONBLOCK|SOCK_CLOEXEC, 0);
   if (fd < 0) {
     printf("socket fail[%s]\n", strerror(errno));
-    goto GEXIT;
+    return -1;
   }
   
-  ret = connect(fd, res->ai_addr, (socklen_t)res->ai_addrlen);
-  if (ret < 0) {
-    printf("bind fail[%s]\n", strerror(errno));
-    close(fd);
-    goto GEXIT;
-  }
-
+  do
+  {
+    ret = connect(fd, res->ai_addr, (socklen_t)res->ai_addrlen);
+    if (ret < 0 && errno != EINPROGRESS) {
+      printf("connect fail[%d:%s]\n", errno, strerror(errno));
+      close(fd);
+      return -1;
+    }
+    
+    if (!ret)
+      break;
+      
+  } while(1);
+  
   pthread_t tid;
   ret = pthread_create(&tid, NULL, client_thread, &fd);
   if (ret < 0) {
@@ -116,9 +153,7 @@ int main(int argc, char** argv) {
 
   pthread_join(tid, NULL);
   
-GEXIT:
-  
-  freeaddrinfo(res);
+  close(fd);
   return 0;
 }
 

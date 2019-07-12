@@ -91,6 +91,7 @@ int main(int argc, char** argv) {
     }
   }
   
+#if 0
   /* getaddrinfo */
   struct addrinfo hint;
   struct addrinfo *res = NULL;
@@ -114,15 +115,16 @@ int main(int argc, char** argv) {
     printf("addrinfo null\n");
     goto GEXIT;
   }
-  
+#endif
   /* create socket */
-  int fd = socket(res->ai_family, SOCK_STREAM|SOCK_NONBLOCK|SOCK_CLOEXEC, 0);
+  int fd = socket(AF_UNSPEC, SOCK_STREAM|SOCK_NONBLOCK|SOCK_CLOEXEC, 0);
   if (fd < 0) {
     printf("socket fail[%s]\n", strerror(errno));
     //continue;
     goto GEXIT;
   }
   
+#if 0
   const char* dst = NULL;
   if (res->ai_family == AF_INET) {
     dst = inet_ntop(res->ai_family, &((struct sockaddr_in*)(res->ai_addr))->sin_addr, saddr, INET6_ADDRSTRLEN);
@@ -134,8 +136,13 @@ int main(int argc, char** argv) {
     printf("inet_ntop fail[%s]\n", strerror(errno));
   else
     printf("family[%d], bind address[%s]\n", res->ai_family, saddr);
-  
-  ret = bind(fd, res->ai_addr, (socklen_t)res->ai_addrlen);
+#endif  
+
+  struct sockaddr_storage ss;
+  memset(&ss, 0, sizeof(ss));
+  ss.ss_family = AF_UNSPEC;
+  ss.
+  ret = bind(fd, (struct sockaddr*)&ss, sizeof(ss));
   if (ret < 0) {
     printf("bind fail[%d:%s]\n", errno, strerror(errno));
     close(fd);
