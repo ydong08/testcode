@@ -6,7 +6,6 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-//#include <ipv6.h>
 #include <ifaddrs.h>
 #include <linux/if_link.h>
 #include <netdb.h>
@@ -17,20 +16,21 @@
 
 
 //#define ENABLE_IPV6
-#define ENABLE_IPV4
+//#define ENABLE_IPV4
 //#define ENABLE_AUTO
 
 #if defined(ENABLE_IPV4)
-const char* addr = "192.168.200.128";
+const char* addr = "192.168.0.166";
+#define WRITE_CONTENT "4-0123456789"
 #elif defined(ENABLE_IPV6)
-const char* addr = "fe80::20c:29ff:fe32:b303%ens33";
+const char* addr = "fe80::d294:66ff:fe80:9460%eno1";
+#define WRITE_CONTENT "6-abcdefghijklmnopqrstuvwxyz"
 #elif defined(ENABLE_AUTO)
 const char* addr = NULL;
 #endif 
 
-#define WIFIDOG_PORT  "2060"
+#define WIFIDOG_PORT  2060
 #define WRITE_BUF_MAX_LEN 128
-#define WRITE_CONTENT "abcdefghijklmnopqrstuvwxyz"
 
 
 void* client_thread(void* arg) {
@@ -81,51 +81,47 @@ int main(int argc, char** argv) {
       }
     }
   }
-  
- 
+
+#if 0  
   /* getaddrinfo */
   struct addrinfo hint;
   struct addrinfo *res = NULL;
   memset(&hint, 0, sizeof(hint));
-  hint.ai_family = AF_UNSPEC;
+#if defined(ENABLE_IPV4)
+  hint.ai_family = AF_INET;
+#elif defined(ENABLE_IPV6)
+  hint.ai_family = AF_INET6;
+#endif 
   hint.ai_socktype = SOCK_STREAM;
   hint.ai_flags = AI_ADDRCONFIG;
+  printf("hint family[%d]\n", hint.ai_family);
   ret = getaddrinfo(addr, WIFIDOG_PORT, &hint, &res); 
   if (ret < 0 || res == NULL) {
     printf("getaddrinfo error: %s\n", gai_strerror(ret));
     exit(EXIT_FAILURE);
   } 
-
-
-#if 0 
-  struct sockaddr *sa = NULL;
-  unsigned short family = 0;
-  socklen_t len = 0;
-#if defined(ENABLE_IPV6)  
-  struct sockaddr_in6 si6;
-  memset(&si6, 0, sizeof(si6)); 
-  family = AF_INET6; 
-  si6.sin6_family = AF_INET6;
-  si6.sin6_port = htons(WIFIDOG_PORT);
-  inet_pton(AF_INET6, addr, &si6.sin6_addr);
-  sa = (struct sockaddr*)&si6;
-  len = sizeof(si6);
 #endif
 
+  int family = 0;
+  struct sockaddr_storage ss;
+  memset(&ss, 0, sizeof(ss));
 #if defined(ENABLE_IPV4)
-  struct sockaddr_in si;
-  memset(&si, 0, sizeof(si));
+  struct sockaddr_in *si = (struct sockaddr_in*)&ss;
+  si->sin_family = AF_INET;
+  si->sin_port = htons(WIFIDOG_PORT);
+  inet_pton(AF_INET, addr, &si->sin_addr);
+  family = AF_INET;
+#elif defined(ENABLE_IPV6)
+  struct sockaddr_in6 *si6 = (struct sockaddr_in6*)&ss;
+  si6->sin6_family = AF_INET6;
+  si6->sin6_port = htons(WIFIDOG_PORT);
+  inet_pton(AF_INET6, addr, &si6->sin6_addr);
   family = AF_INET6;
-  si.sin_family = AF_INET;
-  si.sin_port = htons(WIFIDOG_PORT);
-  inet_pton(AF_INET, addr, &si.sin_addr);
-  sa = (struct sockaddr*)&si;
-  len = sizeof(si);
-#endif
 #endif
   
   /* create socket */
-  int fd = socket(res->ai_family, SOCK_STREAM|SOCK_NONBLOCK|SOCK_CLOEXEC, 0);
+  printf("family[%d]\n", family);
+  int fd = socket(family, SOCK_STREAM|SOCK_NONBLOCK|SOCK_CLOEXEC, 0);
   if (fd < 0) {
     printf("socket fail[%s]\n", strerror(errno));
     return -1;
@@ -133,8 +129,8 @@ int main(int argc, char** argv) {
   
   do
   {
-    ret = connect(fd, res->ai_addr, (socklen_t)res->ai_addrlen);
-    if (ret < 0 && errno != EINPROGRESS) {
+    ret = connect(fd, (struct sockaddr*)&ss, sizeof(ss));
+    if (ret < 0 && errno != EINPROGRESS && errno != EALREADY) {
       printf("connect fail[%d:%s]\n", errno, strerror(errno));
       close(fd);
       return -1;
@@ -142,7 +138,8 @@ int main(int argc, char** argv) {
     
     if (!ret)
       break;
-      
+    usleep(10000);
+    
   } while(1);
   
   pthread_t tid;
