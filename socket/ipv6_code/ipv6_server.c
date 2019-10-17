@@ -22,10 +22,11 @@
 //#define ENABLE_IPV4
 //#define ENABLE_AUTO
 
+#define WIFIDOG_IFNAME  "breth8"
 #if defined(ENABLE_IPV4)
 const char* addr = "192.168.200.128";
 #elif defined(ENABLE_IPV6)
-const char* addr = "fe80::20c:29ff:fe32:b303%ens33";
+const char* addr = "fe80::d294:66ff:fe80:9460%ens33";
 #elif defined(ENABLE_AUTO)
 const char* addr = NULL;
 #endif 
@@ -34,21 +35,28 @@ const char* addr = NULL;
 #define READ_BUF_MAX_LEN 128
 
 
-
 void* server_thread(void* arg) {
   pthread_detach(pthread_self());
   int fd = *(int*)arg;
+  printf("fd[%d]\n", fd);
   int readbyte = 0;
   char buf[READ_BUF_MAX_LEN];
   while(1) {
+    printf("begin recv\n");
     memset(buf, 0, sizeof(buf));
-    readbyte = read(fd, buf, sizeof(buf));
-    if (readbyte < 0 && (errno != EAGAIN || errno != EWOULDBLOCK))
+    readbyte = recv(fd, buf, sizeof(buf), 0);
+    printf("readbyte[%d], errno[%d]\n", readbyte, errno);
+    if (readbyte < 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
+      printf("break recv");
       break;
-    printf("read[%s]\n", buf);
+    }
+    if (0 < readbyte)
+      printf("\tread[%s]\n", buf);
     sleep(1);
   }
   
+  close(fd);
+  printf("end recv");
   pthread_exit(NULL);
   
 }
@@ -89,7 +97,7 @@ int main(int argc, char** argv) {
   struct addrinfo *res = NULL;
   struct addrinfo *pit;
   memset(&hint, 0, sizeof(hint));
-  hint.ai_family = AF_UNSPEC;
+  hint.ai_family = PF_UNSPEC;
   hint.ai_socktype = SOCK_STREAM;
   hint.ai_flags = AI_PASSIVE|AI_ADDRCONFIG;
   char saddr[INET6_ADDRSTRLEN] = {0};
@@ -154,6 +162,7 @@ int main(int argc, char** argv) {
   memset(&ss, 0, sizeof(ss));
   socklen_t socklen = sizeof(ss);
   
+  int newfd = 0;
   while(1) {
     int cfd = accept4(fd, (struct sockaddr*)&ss, &socklen, 0);
     if (cfd < 0) {
@@ -171,24 +180,26 @@ int main(int argc, char** argv) {
     proto = *(unsigned short*)&ss;
     printf("new connect type[%hd]\n", proto);
     memset(saddr, 0, sizeof(saddr));
-    if (proto == AF_INET || proto == PF_INET ) {
+    if (proto == AF_INET) {
       addr4 = (struct sockaddr_in*)&ss;
       inet_ntop(AF_INET, &(addr4->sin_addr), saddr, INET6_ADDRSTRLEN);
       printf("proto[%d] addr[%s]\n", addr4->sin_family, saddr);
-    } else if (proto == AF_INET6 || proto == PF_INET6) {
+    } else if (proto == AF_INET6) {
       addr6 = (struct sockaddr_in6*)&ss;
-      inet_ntop(AF_INET, &(addr6->sin6_addr), saddr, INET6_ADDRSTRLEN);
+      inet_ntop(AF_INET6, &(addr6->sin6_addr), saddr, INET6_ADDRSTRLEN);
       printf("proto[%d] addr[%s]\n", addr6->sin6_family, saddr);
     }
     
-    ret = pthread_create(&tid, NULL, server_thread, &cfd);
+    newfd = cfd;
+    printf("fd[%d]\n", cfd);
+    ret = pthread_create(&tid, NULL, server_thread, &newfd);
     if (ret < 0) {
       printf("create therad fail: %d\n", ret);
     }
   }
   
 GEXIT:
-  
+  close(fd);
   freeaddrinfo(res);
   return 0;
 }
