@@ -18,26 +18,34 @@ int main()
 {
     printf("enter fork\n");
     fflush(NULL);
+	int status;
     pid_t pid = fork();
-    if (0 > pid ){
+    if (pid < 0 || 0 < pid){
         perror("fork");
         exit(1);
     }
 
-    if (0 == pid ){
+    if (0 == pid )
+	{
         printf("enter child process\n");
-        loop_print();
-        exit(0);
-    } else {
-        /*
-        // execl() 
-        execl("/bin/ls", "ls", "-l", NULL);
-        */
+        //loop_print();
+		fflush(NULL);
+		pid = fork();
+		if (pid < 0)
+		{
+			exit(1);
+		}
 
-
-        perror("execl");
-       // wait(NULL);
-       exit(0);
-    }
-     printf("will exit parent process\n");
+		if (pid == 0)
+		{
+			execl("/bin/date", "date", "+%T", NULL);
+        	exit(0);
+		}
+		else
+		{
+			waitpid(pid, &status, 0);
+			printf("exit child-parent process\n");		
+		}
+	}
+    printf("will exit parent process\n");
 }
