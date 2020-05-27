@@ -35,7 +35,7 @@ int main()
       
 		//execl("/bin/date", "date", "+%T", NULL);
 		//execlp("date", "date", "+%T", NULL);
-		//execle("./exect", "exect", NULL, envs);
+		//execle("./echoenv", "echoenv", NULL, envs);
 
 		//execv("/bin/date", param);
 		execvp("date", param);
