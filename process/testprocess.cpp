@@ -37,14 +37,14 @@ int main()
 		//execlp("date", "date", "+%T", NULL);
 		//execle("./echoenv", "echoenv", NULL, envs);
 
-		//execv("/bin/date", param);
-		execvp("date", param);
+		execv("/bin/date", param);
+		//execvp("date", param);
     	printf("exec error\n");
 	}
 	else
 	{
 		waitpid(pid, &status, 0);
-		printf("exit child-parent process\n");		
+		printf("exit parent process\n");		
 	}
  	
  	return 0;
