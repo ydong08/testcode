@@ -12,22 +12,42 @@
 
 int main(int argc, char *argv[])
 {
-	char *act = "action: acconfig";
-	char *table = "Table: ";
-	char *mac = "MAC: ";
-	char *delim = "\r\n";
-	int  ret  = 0;
-	char sendbuf[64] = {0};
+	const char *act = "action: acconfig";
+	const char *cmd = "action: Command";
+	const char *table = "Table: ";
+	const char *mac = "MAC: ";
+	const char *cmdtext = "Command: ";
+	const char *delim = "\r\n";
+	const char *rule = "Rule: ";
 
-	strcat(sendbuf, act);
-	strcat(sendbuf, delim);
-	strcat(sendbuf, mac);
-	strcat(sendbuf, argv[1]);
-	strcat(sendbuf, delim);
-	strcat(sendbuf, table);
-	strcat(sendbuf, argv[2]);
-	strcat(sendbuf, delim);
-	strcat(sendbuf, delim);
+	int  ret  = 0;
+	char sendbuf[128] = {0};
+
+	if (argc == 4)
+	{
+		strcat(sendbuf, cmd);
+		strcat(sendbuf, delim);
+		strcat(sendbuf, mac);
+		strcat(sendbuf, argv[1]);
+		strcat(sendbuf, delim);
+		strcat(sendbuf, cmdtext);
+		strcat(sendbuf, argv[2]);
+		strcat(sendbuf, delim);
+		strcat(sendbuf, delim);
+	}
+	else
+	{
+		strcat(sendbuf, act);
+		strcat(sendbuf, delim);
+		strcat(sendbuf, mac);
+		strcat(sendbuf, argv[1]);
+		strcat(sendbuf, delim);
+		strcat(sendbuf, table);
+		strcat(sendbuf, argv[2]);
+		strcat(sendbuf, delim);
+		strcat(sendbuf, delim);
+	}
+
 
 	int sockfd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (sockfd < 0)
@@ -57,7 +77,7 @@ int main(int argc, char *argv[])
 		{
 			perror("send");
 		}
-		printf("send\n");
+		printf("send:%d:%s", ret, sendbuf);
 		usleep(1000000);
 	}
 
