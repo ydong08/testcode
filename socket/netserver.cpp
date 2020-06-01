@@ -66,6 +66,9 @@ int main(int argc, char* argv[]){
 	int stats;
 	wait(&stats);//thread join
 	*/
+	char buf[sizoef(struct sin_addr)] = {0};
+	inet_pton(AF_INET, IP, buf);
+	printf("IP:%d\n", buf);
 	pid_t pid = getpid();
 	pid_t tid = syscall(SYS_gettid);
 

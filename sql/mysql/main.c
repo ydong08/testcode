@@ -8,7 +8,7 @@
 #define MYSQL_PWD      "mysql"
 
 #define MYSQL_DB       "acmesh"
-#define MYSQL_PORT     (0)
+#define MYSQL_PORTS     (0)
 
 #define CONTROLLER_MAC "1A2B3C"
 int main()

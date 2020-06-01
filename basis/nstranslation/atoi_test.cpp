@@ -22,14 +22,15 @@
 
 int main()
 {
-	const char* pint = "1234";
+	const char* pint = "swan1234";
 	int tmp = atoi(pint);
 	printf("%d\n", tmp);
 
 	char buf[MAXLEN] = {0};
 	char* p = buf;
 
-	strtol(pint, &p, 10);
+	tmp = strtol(pint, &p, 10);
+	printf("num: %ld\n", tmp);
 	printf("str: %s\n", p);
 	
 	return 0;

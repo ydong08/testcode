@@ -5,6 +5,7 @@
 
 int main()
 {
+	char buf[4] = {0};
 	int size = 4 * 1024 * 2;
 	char* p = (char*)malloc(size);
 	if (p) {
@@ -21,5 +22,7 @@ int main()
 		printf("p addr3: %p\n", p);
 	char* m = (char*)malloc(size*2);
 	printf("m addr: %p\n", m);
+
+	memet(buf, 0, sizeof(buf));
 	return 0;
 }

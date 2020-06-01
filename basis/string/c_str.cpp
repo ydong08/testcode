@@ -18,6 +18,13 @@ int main() {
     print(p);
     print(p1);
 
+	const char* ptr = "network\r\n\r\n";
+	printf("prt: %s", ptr);
+	printf("----\n");
+	const char* ptr1 = "k\r\n";
+	printf("prt1: %s", ptr1);
+	printf("----\n");
+
     return 0;
 
 }

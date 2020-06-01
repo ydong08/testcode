@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <memory.h>
+#include <errno.h>
+#include <string.h>
 
 #define INVALID_FD -1
 #define LEN_EVENT 20
@@ -16,6 +18,7 @@
 int createServerSock()
 {
 	// 创建套接字
+	int ret = 0;
 	int sockfd_server = socket(AF_INET, SOCK_STREAM, 0);
 	
 	if (INVALID_FD == sockfd_server)
@@ -26,14 +29,24 @@ int createServerSock()
 	struct sockaddr_in _sockaddr;
 	memset(&_sockaddr, 0, sizeof(_sockaddr));
 	_sockaddr.sin_family = AF_INET;
-	_sockaddr.sin_port = htons(9900);
+	_sockaddr.sin_port = htons(0);
 	_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	
 	// 绑定套接字
-	bind(sockfd_server, (sockaddr *)&_sockaddr, sizeof(struct sockaddr_in));
+	ret = bind(sockfd_server, (sockaddr *)&_sockaddr, sizeof(struct sockaddr_in));
+	if (ret < 0)
+	{
+		printf("bind err[%d:%s]\n", errno, strerror(errno));
+	}
+	printf("bind ret: %d\n", ret);
 	
 	// 监听
-	listen(sockfd_server, 100);
+	ret = listen(sockfd_server, 100);
+	if (ret < 0)
+	{
+		printf("listen err[%d:%s]\n", errno, strerror(errno));
+	}
+	printf("listen ret: %d\n", ret);
 	
 	return sockfd_server;
 }
