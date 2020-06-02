@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 		strcat(sendbuf, delim);
 		#endif
 		strcat(sendbuf, table);
-		strcat(sendbuf, argv[2]);
+		strcat(sendbuf, argv[1]);
 		strcat(sendbuf, delim);
 		strcat(sendbuf, delim);
 	}
