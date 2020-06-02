@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 	int  ret  = 0;
 	char sendbuf[128] = {0};
 
-	if (argc == 4)
+	if (argc == 3)
 	{
 		strcat(sendbuf, cmd);
 		strcat(sendbuf, delim);
@@ -39,9 +39,11 @@ int main(int argc, char *argv[])
 	{
 		strcat(sendbuf, act);
 		strcat(sendbuf, delim);
+		#if 0
 		strcat(sendbuf, mac);
 		strcat(sendbuf, argv[1]);
 		strcat(sendbuf, delim);
+		#endif
 		strcat(sendbuf, table);
 		strcat(sendbuf, argv[2]);
 		strcat(sendbuf, delim);
