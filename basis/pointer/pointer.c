@@ -28,6 +28,6 @@ int main() {
 		printf("name pointer\n");
 	if (p->age)
 		printf("age pointer\n");
-
+	
 	return 0;
 }
