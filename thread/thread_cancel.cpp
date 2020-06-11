@@ -21,17 +21,17 @@ void* thread(void* p) {
     } while (0 < count--);
 
     printf("cleanup exit\n");
-    pthread_exit(2);
+    pthread_exit((char*)2);
 }
 
-void cenceltherad(void* p)
+void* cenceltherad(void* p)
 {
     pthread_t *tid = (pthread_t*)p;
 
     usleep(10000000);
-    pthread_cancel(*p);
+    pthread_cancel(*tid);
 
-    pthread_exit(1);
+    pthread_exit((char*)1);
 
 }
 
@@ -48,10 +48,10 @@ int main() {
     void* st ;
 
     pthread_join(tid, (void**)&st);
-    printf("tid st: %d\n", *st);
+    printf("tid st: %d\n", st);
 
     pthread_join(tid2, (void**)&st);
-    printf("tid2 st: %d\n", *st);
+    printf("tid2 st: %d\n", st);
 
     return 0;
 
