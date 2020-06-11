@@ -42,10 +42,12 @@ int main() {
     if (retval)
         perror("pthread_create");
 
+#if 0
     retval = pthread_create(&tid2, NULL, cenceltherad, &tid);
     if (retval)
         perror("pthread_create cancel");
-
+#endif
+    
     void* st ;
 
     pthread_join(tid, (void**)&st);
