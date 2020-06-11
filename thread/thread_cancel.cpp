@@ -13,7 +13,7 @@ void cleanup(void* p)
 void* thread(void* p) {
     
     int count = 100;
-    
+    pthread_cleanup_push(cleanup, NULL);
     do
     {
         printf("%02d\n", count);
@@ -21,6 +21,7 @@ void* thread(void* p) {
     } while (0 < count--);
 
     printf("cleanup exit\n");
+    pthread_cleanup_pop(1);
     pthread_exit((char*)2);
 }
 
