@@ -1,5 +1,8 @@
 
+#include <stdio.h>
+#include <string.h>
 
+#if 0
 	
 int  ChildString(char*p) {   
  	char *q=p;
@@ -27,4 +30,14 @@ int  ChildString(char*p) {
 	         }   
  	 }  
 	return   maxlen;   
+}
+#endif
+int main()
+{
+	const char *p = "abc,def,hijk";
+	const char *s = "/";
+	char *t = NULL;
+	printf("p:%s\n", strrchr(p, ','));
+	printf("s:%s\n", strtok_r((char*)s, "/", &t));
+	return 0;
 }
