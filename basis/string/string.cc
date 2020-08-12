@@ -34,10 +34,22 @@ int  ChildString(char*p) {
 #endif
 int main()
 {
+	double d = 3.141592627;
+	double f = 3141592627.01;
 	const char *p = "abc,def,hijk";
 	const char *s = "/";
 	char *t = NULL;
 	printf("p:%s\n", strrchr(p, ','));
 	printf("s:%s\n", strtok_r((char*)s, "/", &t));
+
+	printf("[%%*s]:%*s\n", 6, p);
+	printf("[%%.0s]:%.0s\n", p);
+	printf("[%%.*s]:%.*s\n", 6, p);
+	printf("[%%*.*s]:%*.*s\n", 6, 10, p);
+
+	printf("[%%.0lf]:%.0lf\n", d);
+	printf("[%%.*lf]:%.*lf\n", 6, d);
+	printf("[%%.0lf]:%.0lf\n", f);
+	printf("[%%.*lf]:%.*lf\n", 6, f);
 	return 0;
 }
