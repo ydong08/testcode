@@ -3,6 +3,7 @@
 #include <string.h>
 #include <math.h>
 
+#if 0
 void print(const char* p)
 {
     printf("char**: %010X\n", &p);
@@ -17,15 +18,15 @@ int while_loop()
     const char* ptrName = "castles";
     const char* ptrNode = "castles";
     memcmp(ptrName, ptrNode, strlen(ptrName));
-      printf("ret: %d\n"  , memcmp(ptrName, ptrNode, strlen(ptrName)));
-      printf("ret: %d\n"  , memcmp(ptrName, ptrNode, 0));
+    printf("ret: %d\n"  , memcmp(ptrName, ptrNode, strlen(ptrName)));
+    printf("ret: %d\n"  , memcmp(ptrName, ptrNode, 0));
     printf("ret: %d\n"  ,! memcmp(ptrName, ptrNode, strlen(ptrName)));
-     printf("ret: %d\n", ~ memcmp(ptrName, ptrNode, strlen(ptrName)));
-     printf("ret: %d\n" , ! memcmp(ptrName, ptrNode, strlen(ptrName)));
-     printf("ret: %d\n", ~ memcmp(ptrName, ptrNode, strlen(ptrName)));
+    printf("ret: %d\n", ~ memcmp(ptrName, ptrNode, strlen(ptrName)));
+    printf("ret: %d\n" , ! memcmp(ptrName, ptrNode, strlen(ptrName)));
+    printf("ret: %d\n", ~ memcmp(ptrName, ptrNode, strlen(ptrName)));
 
     printf("char**: %010X\n", &ptrName);
-     printf("char**: %010X\n", &ptrNode);
+    printf("char**: %010X\n", &ptrNode);
     printf("char*: %010X\n", ptrName);
     
     printf("char*: %c\n", *ptrName);
@@ -41,4 +42,25 @@ int while_loop()
         printf("add: %d\n", nLen);
     }
     return 0;
+}
+#endif
+
+int main()
+{
+	int n = 1;
+
+	do
+	{
+		n = 0;
+		printf("n:%d\n", n);	
+	} while(n);
+
+	n = 1;
+	while(n)
+	{
+		n = 0;
+		printf("n2:%d\n", n);
+	}
+
+	return 0;
 }
