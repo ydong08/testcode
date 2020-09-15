@@ -65,7 +65,7 @@ void* sock_thread(void* p)
 	while (1)
 	{
 		nanosleep(&mts, &nts);
-		bytes = recv(sfd, buf, sizeof(buf), 0, (struct sockaddr*)&saddr, &socklen);
+		bytes = recvfrom(sfd, buf, sizeof(buf), 0, (struct sockaddr*)&saddr, &socklen);
 		if (bytes < 0)
 		{
 			printf("recvfrom fail:%d\n", errno);
