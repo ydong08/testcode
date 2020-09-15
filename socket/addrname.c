@@ -83,6 +83,7 @@ void* sock_thread(void* p)
 	}
 
 EXIT:
+	if (0 < sfd) close(sfd);
 	pthread_exit(NULL);
 }
 
