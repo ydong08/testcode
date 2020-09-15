@@ -21,6 +21,10 @@
 #include <syscall.h>
 #include <unistd.h>
 
+#define ADDR_INFO_CLIENT
+#define ADDR_INFO_SERVER
+
+if defined(ADDR_INFO_SERVER)
 void* sock_thread(void* p)
 {
 	printf("create thread %d ok\n", syscall(SYS_gettid));
@@ -134,3 +138,50 @@ int main()
 
 	return 0;
 }
+#endif
+
+#if defined(ADDR_INFO_CLIENT)
+int main(int argc, char argv[])
+{
+	int sfd = -1;
+	struct sockaddr_in sin;
+	struct timespec mts,nts;
+	char buf[12] = "1234567890";
+
+	if (argc < 2)
+	{
+		printf("arg few\n");
+		return -1;
+	}
+
+	sfd = socket(AF_INET, SOCK_STREAM, 0);
+	if (sfd < 0)
+	{
+		perror("socket");
+		return -1
+	}
+
+	memset(&sin, 0, sizeof(sin));
+	sin.sin_family = AF_INET;
+	sin.sin_port = htons(argv[1]);
+	inet_pton(AF_INET, "192.168.27.128", &sin.sin_addr, sizeof(sin.sin_addr));
+
+	if (connect(sfd, (struct sockaddr*)&sin, sizeof(sin)) < 0)
+	{
+		perror("connect");
+		return -1;
+	}
+
+	mts.tv_sec = 1;
+	mts.tv_nsec = 200000000;
+	do
+	{
+		write(sfd, buf, strlen(buf));
+		nanosleep(&mts, &nts);
+
+	} while(1);
+
+	return 0;
+}
+
+#endif
