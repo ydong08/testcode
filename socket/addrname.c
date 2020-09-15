@@ -24,7 +24,7 @@
 #define ADDR_INFO_CLIENT
 #define ADDR_INFO_SERVER
 
-if defined(ADDR_INFO_SERVER)
+#if defined(ADDR_INFO_SERVER)
 void* sock_thread(void* p)
 {
 	printf("create thread %d ok\n", syscall(SYS_gettid));
@@ -171,7 +171,7 @@ int main(int argc, char* argv[])
 	if (sfd < 0)
 	{
 		perror("socket");
-		return -1
+		return -1;
 	}
 
 	memset(&sin, 0, sizeof(sin));
