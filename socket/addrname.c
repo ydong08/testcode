@@ -30,6 +30,7 @@ void* sock_thread(void* p)
 	printf("create thread %d ok\n", syscall(SYS_gettid));
 	struct addrinfo *prp = NULL;
 	int sfd = -1;
+	int connfd = -1;
 	int bytes = -1;
 	int res = -1;
 	socklen_t socklen = 0;
@@ -65,10 +66,10 @@ void* sock_thread(void* p)
 	while (1)
 	{
 		nanosleep(&mts, &nts);
-		bytes = recvfrom(sfd, buf, sizeof(buf), 0, &saddr, &socklen);
-		if (bytes < 0)
+		connfd = accept(sfd, (struct sockaddr*)&saddr, &socklen);
+		if (connfd < 0)
 		{
-			printf("recvfrom fail:%d\n", errno);
+			perror("accept");
 			continue;
 		}
 
@@ -76,10 +77,18 @@ void* sock_thread(void* p)
 		if (res)
 		{
 			printf("getnameinfo fail:%d\n", res);
+		}
+		printf("recvfrom host:%s service:%s\n", hostbuf, servbuf);
+
+		bytes = recv(connfd, buf, sizeof(buf), 0);
+		if (bytes < 0)
+		{
+			printf("recvfrom fail:%d\n", errno);
 			continue;
 		}
 
-		printf("recvfrom host:%s service:%s\n", hostbuf, servbuf);
+
+		
 	}
 
 EXIT:
