@@ -167,7 +167,7 @@ int main(int argc, char* argv[])
 	memset(&sin, 0, sizeof(sin));
 	sin.sin_family = AF_INET;
 	sin.sin_port = htons(atoi(argv[1]));
-	inet_pton(AF_INET, argv[2], &sin.sin_addr, sizeof(sin.sin_addr));
+	inet_pton(AF_INET, argv[2], &sin.sin_addr);
 
 	res = connect(sfd, (struct sockaddr*)&sin, sizeof(sin));
 	if (res < 0)
