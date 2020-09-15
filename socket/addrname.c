@@ -59,13 +59,16 @@ void* sock_thread(void* p)
 	if (res < 0)
 	{
 		printf("bind fail:%d\n", errno);
+		goto EXIT;
 	}
 
 	while (1)
 	{
+		nanosleep(&mts, &nts);
 		bytes = recvfrom(sfd, buf, sizeof(buf), 0, &saddr, &socklen);
 		if (bytes < 0)
 		{
+			printf("recvfrom fail:%d\n", errno);
 			continue;
 		}
 
@@ -77,7 +80,6 @@ void* sock_thread(void* p)
 		}
 
 		printf("recvfrom host:%s service:%s\n", hostbuf, servbuf);
-		nanosleep(&mts, &nts);
 	}
 
 EXIT:
@@ -141,14 +143,15 @@ int main()
 #endif
 
 #if defined(ADDR_INFO_CLIENT)
-int main(int argc, char argv[])
+int main(int argc, char* argv[])
 {
 	int sfd = -1;
+	int res = -1;
 	struct sockaddr_in sin;
 	struct timespec mts,nts;
 	char buf[12] = "1234567890";
 
-	if (argc < 2)
+	if (argc < 3)
 	{
 		printf("arg few\n");
 		return -1;
@@ -163,10 +166,11 @@ int main(int argc, char argv[])
 
 	memset(&sin, 0, sizeof(sin));
 	sin.sin_family = AF_INET;
-	sin.sin_port = htons(argv[1]);
-	inet_pton(AF_INET, "192.168.27.128", &sin.sin_addr, sizeof(sin.sin_addr));
+	sin.sin_port = htons(atoi(argv[1]));
+	inet_pton(AF_INET, argv[2], &sin.sin_addr, sizeof(sin.sin_addr));
 
-	if (connect(sfd, (struct sockaddr*)&sin, sizeof(sin)) < 0)
+	res = connect(sfd, (struct sockaddr*)&sin, sizeof(sin));
+	if (res < 0)
 	{
 		perror("connect");
 		return -1;
@@ -176,7 +180,8 @@ int main(int argc, char argv[])
 	mts.tv_nsec = 200000000;
 	do
 	{
-		write(sfd, buf, strlen(buf));
+		res = write(sfd, buf, strlen(buf));
+		printf("write buf errno:%d\n", res < 0 ? errno : 0);
 		nanosleep(&mts, &nts);
 
 	} while(1);
