@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <assert.h>  
 #include <string.h>
+#include <time.h>
   
 #define gettid() syscall(__NR_gettid)  /*get LWP ID */  
   
@@ -27,7 +28,9 @@ void keydestr(void* string)
   
 void * thread1(void *arg)  
 {  
-    int b;  
+    int b; 
+    int loop = 60; 
+    struct timespec mts;
     pthread_t tid=pthread_self();  
     size_t size = 8;  
   
@@ -43,12 +46,20 @@ void * thread1(void *arg)
         strcpy(key_content,"maximus0");  
     }  
     pthread_setspecific(key,(void *)key_content);  
-  
+
     count = 1024;  
     count2 = 2048;  
     count3 = 4096;  
     printf("In thread1, tid=%p, count(%p) = %8d, count2(%p) = %6llu, count3(%p) = %6d\n",tid,&count,count,&count2,count2,&count3,count3);  
   
+  	mts.tv_sec = 1;
+  	mts.tv_nsec = 200000000;
+  	do
+    {
+    	printf("In thread1, tid=%p, count(%p) = %8d, count2(%p) = %6llu, count3(%p) = %6d\n",tid,&count,count,&count2,count2,&count3,count3);  
+    	nanosleep(&mts, NULL);
+    } while(0 < loop--);
+
     sleep(2);  
     printf("thread1 %p keyselfaddress = %p, returns keyaddress = %p\n",tid,&key, pthread_getspecific(key));  
   
@@ -58,7 +69,9 @@ void * thread1(void *arg)
   
 void * thread2(void *arg)  
 {  
-    int b;  
+    int b; 
+    int loop = 60;  
+    struct timespec mts;
     pthread_t tid=pthread_self();  
     size_t size = 8;  
   
@@ -78,7 +91,15 @@ void * thread2(void *arg)
     count = 1025;  
     count2 = 2049;  
     count3 = 4097;  
-    printf("In thread2, tid=%p, count(%p) = %8d, count2(%p) = %6llu, count3(%p) = %6d\n",tid,&count,count,&count2,count2,&count3,count3);  
+    printf("In thread2, tid=%p, count(%p) = %8d, count2(%p) = %6llu, count3(%p) = %6d\n",tid,&count,count,&count2,count2,&count3,count3); 
+
+    mts.tv_sec = 1;
+  	mts.tv_nsec = 200000000;
+  	do
+    {
+    	printf("In thread2, tid=%p, count(%p) = %8d, count2(%p) = %6llu, count3(%p) = %6d\n",tid,&count,count,&count2,count2,&count3,count3);  
+    	nanosleep(&mts, NULL);
+    } while(0 < loop--);
   
     sleep(1);  
     printf("thread2 %p keyselfaddress = %p, returns keyaddress = %p\n",tid,&key, pthread_getspecific(key));  
@@ -92,7 +113,12 @@ int main(void)
 {  
     int b;  
     int autovar = 0;  
-    static int staticvar = 1;  
+    static int staticvar = 1; 
+    int loop = 80; 
+    struct timespec mts; 
+    ict = 1024;
+    ict1 = 2048;
+    ict2 = 4096;
   
     pthread_t tid1,tid2;  
     printf("start,pid=%d\n",getpid());  
@@ -107,6 +133,17 @@ int main(void)
     printf("In main, pthread_create tid1 = %p\n",tid1);  
     printf("In main, pthread_create tid2 = %p\n",tid2);  
   
+  	mts.tv_sec = 0;
+  	mts.tv_nsec = 800000000;
+  	do
+    {
+    	count = ict++;
+    	count2 = ict1++;  
+    	count3 = ict2++; 
+    	printf("In main, tid=%d, count(%p) = %8d, count2(%p) = %6llu, count3(%p) = %6d\n",getpid(),&count,count,&count2,count2,&count3,count3);  
+    	nanosleep(&mts, NULL);
+    } while(0 < loop--);
+
     if(pthread_join(tid2,NULL) == 0)  
     {  
         printf("In main,pthread_join thread2 success!\n");  
