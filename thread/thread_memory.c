@@ -5,7 +5,10 @@
 #include <stdlib.h>  
 #include <pthread.h>  
 #include <sys/syscall.h>  
+#include <sys/types.h>
+#include <unistd.h>
 #include <assert.h>  
+#include <string.h>
   
 #define gettid() syscall(__NR_gettid)  /*get LWP ID */  
   
@@ -29,7 +32,7 @@ void * thread1(void *arg)
     size_t size = 8;  
   
     int autovar = 0;  
-    static staticvar = 1;  
+    static int staticvar = 1;  
     printf("In thread1, autovaraddress = %p, staticvaraddress = %p\n", &autovar, &staticvar);  
   
     printf("In thread1, tid = %p, gettid = %d\n",tid,gettid());  
@@ -60,7 +63,7 @@ void * thread2(void *arg)
     size_t size = 8;  
   
     int autovar = 0;  
-    static staticvar = 1;  
+    static int staticvar = 1;  
     printf("In thread2, autovaraddress = %p, staticvaraddress = %p\n", &autovar, &staticvar);  
   
     printf("In thread2, tid = %p, gettid = %d\n",tid,gettid());  
@@ -89,7 +92,7 @@ int main(void)
 {  
     int b;  
     int autovar = 0;  
-    static staticvar = 1;  
+    static int staticvar = 1;  
   
     pthread_t tid1,tid2;  
     printf("start,pid=%d\n",getpid());  
