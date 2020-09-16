@@ -116,9 +116,9 @@ int main(void)
     static int staticvar = 1; 
     int loop = 80; 
     struct timespec mts; 
-    ict = 1024;
-    ict1 = 2048;
-    ict2 = 4096;
+    int ict = 1024;
+    unsigned long long ict1 = 2048;
+    int ict2 = 4096;
   
     pthread_t tid1,tid2;  
     printf("start,pid=%d\n",getpid());  
