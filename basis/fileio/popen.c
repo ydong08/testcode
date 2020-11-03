@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sting.h>
+#include <time.h>
 
 
 int main()
