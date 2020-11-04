@@ -10,6 +10,11 @@
 #include <sys/time.h>
 #include <errno.h>
 
+int arg_main()
+{
+	return printf("ARG_MAX: %ld\n", sysconf(_SC_ARG_MAX));
+}
+
 int curl_main()
 {
 	const char *cmd = "/userfs/bin/curl -v -sS -g -k -i --connect-timeout 5 --max-time 5 --speed-time 5 --speed-limit 5 http://192.168.80.101:8090/?info={\"name\":\"itibia\",\"average\":\"818.12\",\"ip\":\"172.168.41.109\",\"speed\":\"800.00\",\"maxSpeed\":\"900.00\",\"startTime\":\"20201102113030\",\"stopTime\":\"20201102113030\",\"downfilelarge\":\"123456\",\"percent\":\"80\",\"Source\":\"RMS\",\"WANInterface\":\"InternetGatewayDevice.WANDevice.1.WANConnectionDevice.2.WANPPPConnection.1.\",\"identify\":\"8e004f46-1dbb-44ea-a53b-126587ab9675\",\"type\":\"DownLink\"}";
@@ -32,7 +37,8 @@ int curl_main()
 
 int main(int argc, char* argv[])
 {
-	return curl_main();
+	return arg_main();
+//	return curl_main();
 #if 0
 	int  num = 100;
 	int socketfd = 0;

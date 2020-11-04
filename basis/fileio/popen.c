@@ -4,8 +4,6 @@
 #include <time.h>
 #include <unistd.h>
 
-
-#define CURL_REPORT_COLUMN(x) "\"\"x\"\":\"\"%s\"\","
 int main()
 {
 	int i = 0;
@@ -17,10 +15,7 @@ int main()
 	//FILE *fp = popen(cmd, "r");
 	FILE *fp = popen(f, "r");
 	if (fp) pclose(fp);
-	snprintf(recv, sizeof(recv), CURL_REPORT_COLUMN(ip), "192.168.1.1");
-	printf("recv:%s\n", recv);
 
-#if 0
 	for (i = 0; i < 100; ++i)
 	{
 		memset(recv, 0, sizeof(recv));
@@ -33,8 +28,7 @@ int main()
 			usleep(500000);
 		}
 	}
-#endif
-	
+
 	return 0;
 
 }

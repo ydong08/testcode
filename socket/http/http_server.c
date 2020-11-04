@@ -66,7 +66,7 @@ void do_write(int fd, int flag)
 	char *header = "HTTP/1.1 200 OK\r\nContent-Type: application/json;charset=utf-8\r\nContent-Length: %d\r\n";
 	char *body = "<html><body>%s</body></html>\r\n";
 	char *response0 = "{\"speed\":\"800M\",\"threadcount\":\"4\",\"ip\":\"192.168.28.92\",\"port\":\"\",\"download\":\"3.7G.iso\",\"identify\":\"8e004f46-1dbb-44ea-a53b-126587ab9675\",\"code\":\"421\"}";
-	char *response1 = "{\"code\":\"421\"}";
+	char *response1 = "{\"code\":\'421\'}";
 	char msg[1024] = {0};
 
 	switch(flag)
