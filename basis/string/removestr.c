@@ -14,12 +14,17 @@ int main()
 	char vlan[12] = {"30"};
 	char vlansettmp[128] = {0};
 
+	char awkbuf[512] = {0};
+
 	char* pos = strstr(vlanset, vlan);
 	//memset(pos, 0, strlen(vlan)+1);
 	*pos = '\0';
 	strncpy(vlansettmp, vlanset, strlen(vlanset));
 	strcat(vlansettmp, pos+strlen(vlan)+1);
-	printf("vlansettmp: %s\n", vlansettmp);
+	printf("vlansettmp: %s\n\n", vlansettmp);
+
+	
+	
 	return 0;
 
 }

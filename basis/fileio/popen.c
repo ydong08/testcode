@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <sting.h>
+#include <string.h>
 #include <time.h>
+#include <unistd.h>
 
 
 #define CURL_REPORT_COLUMN(x) "\"\"x\"\":\"\"%s\"\","

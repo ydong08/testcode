@@ -21,7 +21,7 @@
 #include <syscall.h>
 #include <unistd.h>
 
-#define ADDR_INFO_CLIENT
+//#define ADDR_INFO_CLIENT
 #define ADDR_INFO_SERVER
 
 #if defined(ADDR_INFO_SERVER)
