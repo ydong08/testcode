@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <linux/route.h>
+#include <linux/in.h>
 
 #define INET_ADDR(x)	(((struct sockaddr_in *) &(x))->sin_addr.s_addr)
 
@@ -30,7 +31,9 @@ int main()
     	exit(1);
     }
 
-    if (ioctl(ipfd, SIOCADDRT, &rt) < 0) { 
+    // if (ioctl(ipfd, SIOCDELRT, &rt) < 0)
+    if (ioctl(ipfd, SIOCADDRT, &rt) < 0) 
+    { 
     	perror("ioctl");                                                                                                                                            
     	return 1;
     }    
