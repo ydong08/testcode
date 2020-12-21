@@ -14,8 +14,10 @@ typedef struct stPoint
 
 } STPOINT, *PSTPOINT;
 
-int main() {
+int main(int argc, char *argv[]) 
+{
 
+	int i = 0;
 	STPOINT stp;
 	strcpy(stp.name, "123456789");
 	strcpy(stp.age, "789");
@@ -28,6 +30,15 @@ int main() {
 		printf("name pointer\n");
 	if (p->age)
 		printf("age pointer\n");
+
+	printf("main parameter:\n");
+	printf("-------------------------------\n");
+	for (; i < argc; ++i)
+	{
+		printf("\targv[%d]: %s.\n", i, argv[i]);
+	}
+	printf("-------------------------------\n");
+
 	
 	return 0;
 }
