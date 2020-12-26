@@ -21,8 +21,10 @@
  * 3. call 0x12345
  * 		pushl %eip  *
  * 		movl 0x12345, %eip *
+ * 	执行call时，cs:eip原来的值指向call的下一条指令，该直被保存到栈顶，
+ * 	然后cs:eip的值指向被调用函数的入口地址
  * 4. ret
- * 		popl %eip  *)
+ * 		popl %eip  *
  * 5. enter
  * 		pushl %ebp
  * 		movl %esp %ebp
