@@ -7,7 +7,7 @@ int add(int x, int y) {
   return x+y;
 }
 
-int div(int a, int b) {
+int divd(int a, int b) {
   return a/b;
 }
 

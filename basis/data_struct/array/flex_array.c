@@ -15,6 +15,7 @@
 
 typedef struct _GroupInfo
 {
+	int flag;
 	int num[GROUP_MAX_NUM];
 	int addr[][ADDR_MAX_LEN];
 } GROUPINFO;
@@ -24,6 +25,7 @@ int main() {
 	memset(&stGInfo, 0, sizeof(GROUPINFO));
 	printf("group struct size: %d\n", sizeof(GROUPINFO));
 	printf("group struct var size: %d\n", sizeof(stGInfo));
+#if 0
 	for (int i = 0; i < GROUP_MAX_NUM; ++i) {
 		for (int j = 0; j < ADDR_MAX_LEN; ++j) {
 			stGInfo.num[i] = i;
@@ -32,6 +34,11 @@ int main() {
 	}
 	
 	printf("group struct var size: %d\n", sizeof(stGInfo));
+#endif
+	printf("addr:%p.\n", ((GROUPINFO*)0)->flag);
+
+	typeof(((GROUPINFO*)0)->flag) type = -1;
+	printf("addr:%p-%d.\n", type,type);
 	return 0;
 
 }

@@ -6,7 +6,7 @@ extern "C"
 
 int add(int, int);
 
-int div(int, int);
+int divd(int, int);
 
 int mul(int, int);
 
