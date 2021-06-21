@@ -17,12 +17,13 @@ typedef struct stPoint
 int main(int argc, char *argv[]) 
 {
 
+	char *pos = NULL;
 	int i = 0;
 	STPOINT stp;
 	strcpy(stp.name, "123456789");
 	strcpy(stp.age, "789");
 	printf("\n\tname: %s\n\tage: %s\n", stp.name, stp.age);
-	strcpy(stp.name, "");
+	//strcpy(stp.name, "");
 	strcpy(stp.age, "");
 	printf("\n\tname: %s\n\tage: %s\n", stp.name, stp.age);
 	PPOINTER p;
@@ -39,6 +40,8 @@ int main(int argc, char *argv[])
 	}
 	printf("-------------------------------\n");
 
-	
+	pos = strstr(stp.name, "12");
+	printf("pos:%p, name:%p.\n", pos, stp.name);
+
 	return 0;
 }
