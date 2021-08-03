@@ -42,6 +42,13 @@ int main(int argc, char *argv[])
 
 	pos = strstr(stp.name, "12");
 	printf("pos:%p, name:%p.\n", pos, stp.name);
+	
+	pos = NULL;
+	int *pint = (int*)pos;
+	if (!pint)
+	printf("pint null\n");
+	else
+	printf("print not null\n");
 
 	return 0;
 }

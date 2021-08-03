@@ -51,5 +51,10 @@ int main()
 	printf("[%%.*lf]:%.*lf\n", 6, d);
 	printf("[%%.0lf]:%.0lf\n", f);
 	printf("[%%.*lf]:%.*lf\n", 6, f);
+
+	char info[128] = {0};
+	strcat(info, p);
+	printf("info: %s.\n", info);
+
 	return 0;
 }

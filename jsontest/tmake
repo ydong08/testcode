@@ -1,0 +1,26 @@
+
+#!/bin/sh
+
+
+if [ "x$1" == "x1" ];
+then
+# json
+make -C ../libjson-1.5/
+cp -avf ../libjson-1.5/json-1.5/src/.libs/libmjson-1.5.so .
+cp -avf ../libjson-1.5/json-1.5/src/.libs/libmjson.so .
+cp -f ../libjson-1.5/mjson-1.5/json.h .
+cp -f ../libjson-1.5/mjson-1.5/json_helper.h .
+
+#openssl
+make -C ../openssl-1.0.1p/
+cp -avf ../openssl-1.0.1p/libssl.so* .
+cp -avf ../openssl-1.0.1p/libcrypto.so* .
+cp -fr ../openssl-1.0.1p/OPSSL/include/openssl .
+fi
+
+rm -f jsontest
+gcc -g -Wall -Wl,-rpath=${pwd} -o jsontest test.c -L . -lmjson -lssl -lcrypto
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$pwd
+./jsontest config.json
+
+
