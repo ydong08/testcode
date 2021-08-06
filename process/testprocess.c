@@ -5,6 +5,8 @@
 #include <unistd.h>
 
 #define LOOP 20
+#define PROCESS_SH "./process.sh"
+
 void loop_print(void)
 {
     int nloop = 0;
@@ -21,6 +23,16 @@ int main()
     printf("enter fork\n");
     fflush(NULL);
 	int status;
+
+	FILE *fp = popen(PROCESS_SH, "r");
+	if (!fp)
+	{
+		perror("popen");
+		return -1;
+	}
+
+	printf("bash file done.\n");
+#if 0
     pid_t pid = fork();
     if (pid < 0){
         perror("fork");
@@ -44,6 +56,7 @@ int main()
 		waitpid(pid, &status, 0);
 		printf("exit parent process\n");		
 	}
- 	
+#endif
+
  	return 0;
 }
