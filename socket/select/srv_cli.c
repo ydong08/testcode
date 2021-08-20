@@ -1,10 +1,4 @@
 
-#define HOST_PUBLIC_IP        "106.14.143.134"
-#define HOST_PRIVATE_IP       "172.19.16.173"
-#define HOST_PORT             (3389)
-
-#define ENABLE_SERVER
-//#define ENABLE_CLIENT
 /******* 服务器程序  (server.c) ************/ 
 #include <stdlib.h> 
 #include <stdio.h> 
@@ -18,6 +12,10 @@
 #include <sys/types.h> 
 #include <arpa/inet.h> 
 #include <linux/tcp.h>
+
+#define HOST_PUBLIC_IP        "106.14.143.134"
+#define HOST_PRIVATE_IP       "172.19.16.173"
+#define HOST_PORT             (3389)
 
 #ifdef ENABLE_SERVER
 int main(int argc, char *argv[]) { 
@@ -57,8 +55,6 @@ int main(int argc, char *argv[]) {
     int keepIdle = 30; // 如该连接在60秒内没有任何数据往来,则进行探测 
     int keepInterval = 5; // 探测时发包的时间间隔为5 秒
     int keepCount = 3; // 探测尝试的次数.如果第1次探测包就收到响应了,则后2次的不再发.
-
-   
 
     /* 服务器端填充 sockaddr结构  */  
     memset(&server_addr, 0, sizeof(struct sockaddr_in)); 
