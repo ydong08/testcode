@@ -13,10 +13,11 @@
 #include <arpa/inet.h> 
 #include <linux/tcp.h>
 
-#define HOST_PUBLIC_IP        "106.14.143.134"
+#define HOST_PUBLIC_IP        "192.168.27.129"
 #define HOST_PRIVATE_IP       "172.19.16.173"
-#define HOST_PORT             (3389)
+#define HOST_PORT             (6001)
 
+#define ENABLE_CLIENT
 #ifdef ENABLE_SERVER
 int main(int argc, char *argv[]) { 
     int sockfd,new_fd;         
@@ -141,7 +142,6 @@ int main(int argc, char *argv[]) {
 #include <sys/types.h> 
 #include <arpa/inet.h> 
 
-
 int main(int argc, char *argv[]) 
 { 
     int sockfd; 
@@ -178,7 +178,7 @@ int main(int argc, char *argv[])
     server_addr.sin_family=AF_INET; 
     server_addr.sin_port=htons(portnumber); 
     //server_addr.sin_addr=*((struct in_addr *)host->h_addr);  
-    inet_pton(AF_INET, HOST_PUBLIC_IP, &server_addr.sin_addr.s_addr);  
+    inet_pton(AF_INET, HOST_PUBLIC_IP, &server_addr.sin_addr);  
 
     /* 客户程序发起连接请求*/  
     if(connect(sockfd,(struct sockaddr *)(&server_addr),sizeof(struct sockaddr))==-1)        
@@ -191,8 +191,9 @@ int main(int argc, char *argv[])
     do
     {
         nbytes = send(sockfd, buf, sizeof(buf), 0);
-        if (nbytes < 0)
-            break;
+		printf("send %d.\n", nbytes);
+        //if (nbytes < 0)
+         //   break;
         usleep(1000000);
     } while(1);
 

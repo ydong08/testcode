@@ -1,3 +1,10 @@
+
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <memory.h>
+#include <errno.h>
 #include <sys/epoll.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -7,12 +14,6 @@
 #include <sys/ioctl.h>
 #include <sys/wait.h>
 #include <net/if.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <memory.h>
-#include <errno.h>
 #include <string.h>
 
 
@@ -21,8 +22,7 @@
 #define MAXLINE 5
 #define OPEN_MAX 100
 #define LISTENQ 20
-#define SERV_PORT 5000
-#define INFTIM 1000
+#define PORTNUMBER 6001
 
 void setnonblocking(int sock)
 {
@@ -41,7 +41,7 @@ void setnonblocking(int sock)
     }
 }
 
-void CloseAndDisable(int sockid, epoll_event ee)
+void CloseAndDisable(int sockid, struct epoll_event ee)
 {
     close(sockid);
     ee.data.fd = -1;
@@ -56,9 +56,9 @@ int getPeerMacbySocketFd( int sockfd, char *buf, char* localethname )
     socklen_t  len = sizeof( struct sockaddr_in );
     memset( &arpreq, 0, sizeof( struct arpreq ));
     memset( &dstadd_in, 0, sizeof( struct sockaddr_in )); 
-    if( getpeername( sockfd, (struct sockaddr*)&dstadd_in, &len ) < 0 )
+    if(getpeername(sockfd, (struct sockaddr*)&dstadd_in, &len) < 0 )
     {
-        perror( "get peer name wrong, %s/n", strerror(errno) );
+        perror( "get peer name wrongn");
         return -1;
     }
 
@@ -66,9 +66,9 @@ int getPeerMacbySocketFd( int sockfd, char *buf, char* localethname )
     strcpy(arpreq.arp_dev, localethname);
     arpreq.arp_pa.sa_family = AF_INET;
     arpreq.arp_ha.sa_family = AF_UNSPEC;
-    if( ioctl( sockfd, SIOCGARP, &arpreq ) < 0 )
+    if(ioctl(sockfd, SIOCGARP, &arpreq ) < 0 )
     {
-        perror( "ioctl SIOCGARP wrong, %s/n", strerror(errno) );
+        perror( "ioctl SIOCGARP wrong");
         return -1;
     }
 
@@ -92,13 +92,13 @@ int gahGetPeerMacbyIp(char *ipaddr, char* buf, char* localethname)
 
 	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 	if (sockfd == -1) {
-	        trace(3, "socket error");
+	        perror("socket error");
 	        return -1;
 	}
 	sin = (struct sockaddr_in *) &ss;
 	sin->sin_family = AF_INET;
 	if (inet_pton(AF_INET, ipaddr, &(sin->sin_addr)) <= 0) {
-	        trace(3, "inet_pton error");
+	        perror("inet_pton error");
 	        return -1;
 	}
 	sin = (struct sockaddr_in *) &arpreq.arp_pa;
@@ -106,7 +106,7 @@ int gahGetPeerMacbyIp(char *ipaddr, char* buf, char* localethname)
 	strcpy(arpreq.arp_dev, localethname);
 	arpreq.arp_ha.sa_family = AF_UNSPEC;
 	if (ioctl(sockfd, SIOCGARP, &arpreq) < 0) {
-	        trace(3, "ioctl SIOCGARP: ");
+	        perror("ioctl SIOCGARP: ");
 	        return -1;
 	}
 	ptr = (unsigned char *)arpreq.arp_ha.sa_data;
@@ -116,28 +116,39 @@ int gahGetPeerMacbyIp(char *ipaddr, char* buf, char* localethname)
 
 int main()
 {
-    int i, maxi, listenfd, connfd, sockfd,epfd,nfds, portnumber;
+    int i;
+	int maxi;
+	int listenfd;
+	int connfd;
+	int sockfd;
+	int epfd;
+	int nfds;
+	int portnumber;
+    int recvNum = 0;
+    int count = 0;
+    int bReadOk = 0;
     char line[MAXLINE];
+	char mac[20] = {0};
+	char ethname[8] = {"ens33"};
+    unsigned char buf[1024] = {0};
     socklen_t clilen;
-
-    portnumber = 60001;
+    struct sockaddr_in clientaddr;
+    struct sockaddr_in serveraddr;
 
     //声明epoll_event结构体的变量,ev用于注册事件,数组用于回传要处理的事件
     struct epoll_event ev,events[20];
 
     //生成用于处理accept的epoll专用的文件描述符
     epfd=epoll_create(256);
-    struct sockaddr_in clientaddr;
-    struct sockaddr_in serveraddr;
     listenfd = socket(AF_INET, SOCK_STREAM, 0);
 
     memset(&serveraddr, 0, sizeof(serveraddr));
     serveraddr.sin_family = AF_INET;
     serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    serveraddr.sin_port=htons(portnumber);
+    serveraddr.sin_port=htons(PORTNUMBER);
 
     // bind and listen
-    bind(listenfd,(sockaddr *)&serveraddr, sizeof(serveraddr));
+    bind(listenfd,(struct sockaddr*)&serveraddr, sizeof(serveraddr));
     listen(listenfd, LISTENQ);
 
     //设置与要处理的事件相关的文件描述符
@@ -149,37 +160,31 @@ int main()
     //注册epoll事件
     epoll_ctl(epfd,EPOLL_CTL_ADD,listenfd,&ev);
 
-    maxi = 0;
-    int bOut = 0;
     for ( ; ; )
     {
-        if (bOut == 1)
-            break;
         //等待epoll事件的发生
         nfds=epoll_wait(epfd,events,20,-1);
 
         //处理所发生的所有事件
-        cout << "\nepoll_wait returns\n";
         for(i=0;i<nfds;++i)
         {
             //如果新监测到一个SOCKET用户连接到了绑定的SOCKET端口，建立新的连接。
             if(events[i].data.fd==listenfd)
             {
-                connfd = accept(listenfd,(sockaddr *)&clientaddr, &clilen);
-                if(connfd<0){
-                    perror("connfd<0");
-                    return (1);
+                connfd = accept(listenfd,(struct sockaddr *)&clientaddr, &clilen);
+                if(connfd < 0){
+                    perror("accept");
+                  //  return (1);
+				  continue;
                 }
 
                 char *str = inet_ntoa(clientaddr.sin_addr);
-                cout << "accapt a connection from " << str << endl;
 
                 //设置用于读操作的文件描述符
                 setnonblocking(connfd);
                 ev.data.fd=connfd;
                 //设置用于注测的读操作事件
                 ev.events=EPOLLIN | EPOLLET;
-                //ev.events=EPOLLIN;
 
                 //注册ev
                 epoll_ctl(epfd,EPOLL_CTL_ADD,connfd,&ev);
@@ -187,15 +192,11 @@ int main()
             else if(events[i].events & EPOLLIN)
             {
                 //如果是已经连接的用户，并且收到数据，那么进行读入。
-                cout << "EPOLLIN" << endl;
                 if ( (sockfd = events[i].data.fd) < 0)
                     continue;
 
-                unsigned char buf[1024] = {0};
-                int recvNum = 0;
-                int count = 0;
-                bool bReadOk = false;
-
+				getPeerMacbySocketFd(sockfd, mac, ethname);
+				printf("mac:%s\n", mac);
                 // 确保sockfd是nonblocking的
                 recvNum = recv(sockfd, buf, 1024, 0);
 				for (int i = 0; i < recvNum; ++i)
