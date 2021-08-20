@@ -18,7 +18,34 @@
 
 #define INVALID_FD -1
 #define LEN_EVENT 20
+#define MAXLINE 5
+#define OPEN_MAX 100
+#define LISTENQ 20
+#define SERV_PORT 5000
+#define INFTIM 1000
 
+void setnonblocking(int sock)
+{
+    int opts;
+    opts=fcntl(sock,F_GETFL);
+    if(opts<0)
+    {
+        perror("fcntl(sock,GETFL)");
+        return;
+    }
+    opts = opts|O_NONBLOCK;
+    if(fcntl(sock,F_SETFL,opts)<0)
+    {
+        perror("fcntl(sock,SETFL,opts)");
+        return;
+    }
+}
+
+void CloseAndDisable(int sockid, epoll_event ee)
+{
+    close(sockid);
+    ee.data.fd = -1;
+}
 
 /* 通过sockfd获取mac地址 */
 int getPeerMacbySocketFd( int sockfd, char *buf, char* localethname )
@@ -85,133 +112,6 @@ int gahGetPeerMacbyIp(char *ipaddr, char* buf, char* localethname)
 	ptr = (unsigned char *)arpreq.arp_ha.sa_data;
 	sprintf(buf,"%02x:%02x:%02x:%02x:%02x:%02x", *ptr, *(ptr+1), *(ptr+2), *(ptr+3), *(ptr+4), *(ptr+5));
 	return 0;
-}
-
-// 创建服务端套接字
-int createServerSock()
-{
-	// 创建套接字
-	int ret = 0;
-	int sockfd_server = socket(AF_INET, SOCK_STREAM, 0);
-	
-	if (INVALID_FD == sockfd_server)
-	{
-		return INVALID_FD;
-	}
-	
-	struct sockaddr_in _sockaddr;
-	memset(&_sockaddr, 0, sizeof(_sockaddr));
-	_sockaddr.sin_family = AF_INET;
-	_sockaddr.sin_port = htons(8090);
-	_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-	
-	// 绑定套接字
-	ret = bind(sockfd_server, (sockaddr *)&_sockaddr, sizeof(struct sockaddr_in));
-	if (ret < 0)
-	{
-		printf("bind err[%d:%s]\n", errno, strerror(errno));
-	}
-	printf("bind ret: %d\n", ret);
-	
-	// 监听
-	ret = listen(sockfd_server, 100);
-	if (ret < 0)
-	{
-		printf("listen err[%d:%s]\n", errno, strerror(errno));
-	}
-	printf("listen ret: %d\n", ret);
-	
-	return sockfd_server;
-}
-
-// 设置套接字
-void setsocketfd(int socketfd)
-{
-	int flags = fcntl(socketfd, F_GETFL);
-	fcntl(socketfd, F_SETFL, flags | O_NONBLOCK);
-}
-
-
-int main()
-{
-	// 创建套接字
-	int socket_server = createServerSock();
-	if (INVALID_FD == socket_server)
-	{
-		printf("create server socket error.\n");
-		return EXIT_FAILURE;
-	}
-	
-	int fd_epoll = epoll_create(256); // 创建epoll描述符
-	
-	if (INVALID_FD == fd_epoll)
-	{
-		printf("create epoll error \n");
-		return EXIT_FAILURE;
-	}
-	
-	// 注册epoll事件
-	struct epoll_event event, events[LEN_EVENT];
-	event.data.fd = socket_server;
-	event.events = EPOLLIN | EPOLLET;
-	
-	int ret = epoll_ctl(fd_epoll, EPOLL_CTL_ADD, socket_server, &event);
-		
-	if  (ret == INVALID_FD)
-	{
-		printf("注册epoll事件失败..\n");
-		return EXIT_FAILURE;
-	}
-	
-	printf("注册epoll事件成功..\n");
-	int nfds = -1;
-	for ( ; ; )
-	{
-		nfds=epoll_wait(fd_epoll, events, LEN_EVENT, -1);
-		printf("新的连接进入....");
-		for (int i = 0; i < nfds; ++i)
-		{
-			//如果新监测到一个SOCKET用户连接到了绑定的SOCKET端口，建立新的连接。
-			if(events[i].data.fd == socket_server)
-			{
-				printf("新的连接进入....");
-			}
-			
-		}
-	}
-	
-	return EXIT_SUCCESS;
-}
-
-
-
-#define MAXLINE 5
-#define OPEN_MAX 100
-#define LISTENQ 20
-#define SERV_PORT 5000
-#define INFTIM 1000
-
-void setnonblocking(int sock)
-{
-    int opts;
-    opts=fcntl(sock,F_GETFL);
-    if(opts<0)
-    {
-        perror("fcntl(sock,GETFL)");
-        return;
-    }
-    opts = opts|O_NONBLOCK;
-    if(fcntl(sock,F_SETFL,opts)<0)
-    {
-        perror("fcntl(sock,SETFL,opts)");
-        return;
-    }
-}
-
-void CloseAndDisable(int sockid, epoll_event ee)
-{
-    close(sockid);
-    ee.data.fd = -1;
 }
 
 int main()
