@@ -1,13 +1,14 @@
 {
 	"uuid":"803AF4528CD2",
 	"dev":"SD-CPE",
-	"authen":"http://10.10.10.10:3330",
+	"authen":"http://192.168.27.127:8330",
 	"user":"root",
 	"pwd" :"pwd123",
 	"wans":[{
 		"name":"ge-1",
 		"type":"static",
-		"ipv4":"134.150.0.163/27"
+		"ipv4":"134.150.0.163/27",
+		"dnsSvr":"1.1.1.1"
 	}],
 	"statRtV4":[{
 		"rtIp":"0.0.0.0/0",

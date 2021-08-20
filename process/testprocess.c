@@ -3,9 +3,10 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <sys/stat.h>
 
 #define LOOP 20
-#define PROCESS_SH "./process.sh"
+#define PROCESS_SH "/home/winter/repo/testcode/process/process.sh"
 
 void loop_print(void)
 {
@@ -20,10 +21,9 @@ int main()
 {
 	char *envs[] = {"exec=ok", "process=main", NULL};
 	char *param[] = {"date", "+%T", NULL};
-    printf("enter fork\n");
-    fflush(NULL);
 	int status;
 
+	chmod(PROCESS_SH, 00744);
 	FILE *fp = popen(PROCESS_SH, "r");
 	if (!fp)
 	{
@@ -33,6 +33,8 @@ int main()
 
 	printf("bash file done.\n");
 #if 0
+    printf("enter fork\n");
+    fflush(NULL);
     pid_t pid = fork();
     if (pid < 0){
         perror("fork");

@@ -1,9 +1,8 @@
 #!/bin/sh
 
-
-while 1
+while :
 do
-	echo "while loop"
+	echo "while loop" >> output.tmp
 	sleep 1
 done
 

@@ -283,6 +283,7 @@ int base64_encode(char *in_str, int in_len, char *out_str)
 		return -1;
 
 	b64 = BIO_new(BIO_f_base64());
+	BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
 	bio = BIO_new(BIO_s_mem());
 	bio = BIO_push(b64, bio);
 
@@ -307,7 +308,7 @@ int base64_decode(char *in_str, int in_len, char *out_str)
 		return -1;
 
 	b64 = BIO_new(BIO_f_base64());
-	//BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
+	BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
 
 	bio = BIO_new_mem_buf(in_str, in_len);
 	bio = BIO_push(b64, bio);
@@ -419,7 +420,7 @@ main (int argc, char **argv)
 	printf("[%s:%d] json file %s content: %s.\n", __FUNCTION__, __LINE__, argv[1], ptr);
 	base64_encode(ptr, len, content);
 	//content[strlen(content) - 1] = 0;
-	printf("[%s:%d] json file %s encode content: %s.\n", __FUNCTION__, __LINE__, argv[1], content);
+	printf("[%s:%d] json file %s encode content[%d]:%s.\n", __FUNCTION__, __LINE__, argv[1], strlen(content), content);
 
 	md5calc(content, strlen(content), md5str, sizeof(md5str));
 	printf("[%s:%d] json encode content md5 string: %s.\n", __FUNCTION__, __LINE__, md5str);
