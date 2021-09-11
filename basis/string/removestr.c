@@ -22,8 +22,11 @@ int main()
 	strncpy(vlansettmp, vlanset, strlen(vlanset));
 	strcat(vlansettmp, pos+strlen(vlan)+1);
 	printf("vlansettmp: %s\n\n", vlansettmp);
-
 	
+	if (!strcmp(vlansettmp, vlan))
+		printf("equal\n");
+	else 
+		printf("not equal\n");
 	
 	return 0;
 
